@@ -1,0 +1,93 @@
+body {
+  background-color: #F0DDDB;
+  font-family: 'Roboto', sans-serif;
+}
+
+h1 {
+  font-size: 52px;
+  color: #1E555C;
+}
+
+.root-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
+
+.root-item {
+  text-align: center;
+}
+
+.root-input {
+  width: 60%;
+  height: 60px;
+  font-size: 44px;
+  border-radius: 10px;
+  margin-bottom: 200px;
+}
+
+.cities-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.cities-item {
+  background-color: lightgray;
+  width: 33%;
+  height: 20vh;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0px 0px;
+  padding: 0px 0px;
+}
+
+.neighborhoods-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* .neighborhoods-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+} */
+
+/* .neighborhoods-item {
+  width: 24.5%;
+  height: 20vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid grey;
+} */
+
+.criteria-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+ .criteria-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; 
+  width: 100%;
+} 
+
+.criteria-input {
+  width: 60%;
+  height: 60px;
+  font-size: 44px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  text-align: center;
+}

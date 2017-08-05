@@ -33,10 +33,10 @@ export default class InputForm extends React.Component {
 
   render(){
     return (
-      <div>
-        <h3>This is my form...fill me in :)</h3>
-        <form onSubmit={this.handleSubmit}>
-          <input onChange={this.handleChange}></input>
+      <div className="criteria-container">
+        <h3 className="criteria-item">What are you looking for in a neighborhood?</h3>
+        <form className="criteria-item criteria-form" onSubmit={this.handleSubmit}>
+          <input autoFocus className="criteria-input" onChange={this.handleChange}></input>
           <button type="submit">Submit</button>
         </form>
       </div>

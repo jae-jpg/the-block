@@ -26,16 +26,9 @@ export default class Root extends Component {
   render() {
     const {cityList} = this.state;
     return (
-      <div>
-        <h1>Hello World</h1>
-        <InputForm />
-        <ul>
-          {
-            cityList.map(city => 
-              <li key={city.id}><Link to={`/city/${city.id}`}>{city.name}</Link></li>
-            )
-          }
-        </ul>
+      <div className="root-container">
+        <h1 className="root-item">Where would you like to live?</h1>
+        <input autoFocus className="root-item root-input"></input>
       </div>
     )
   }
@@ -93,3 +86,12 @@ export default class Root extends Component {
     }
  * 
  */
+
+//  // OLD JSX
+//          <ul className="root-item cities-list">
+//           {
+//             cityList.map(city => 
+//               <li className="cities-item" key={city.id}><Link to={`/city/${city.id}`}>{city.name}</Link></li>
+//             )
+//           }
+//         </ul>

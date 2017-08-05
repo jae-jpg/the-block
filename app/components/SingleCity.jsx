@@ -25,16 +25,22 @@ export default class SingleCity extends React.Component {
   render(){
     return (
       <div>
-        <h1>Single City Neighborhoods:</h1>
+        <div className="neighborhoods-header">
+          <h1>Welcome to {this.state.currentCity.name}</h1>
           <InputForm/>
-          <ul>
-            {
-              this.state.currentCityNeighborhoods.map(neighborhood => 
-                <li key={neighborhood.id}>{neighborhood.name}</li>
-              )
-            }
-          </ul>
+        </div>
+        <div className="neighborhoods-list">
+          {
+            this.state.currentCityNeighborhoods.map(neighborhood => 
+              <div className="neighborhoods-item" key={neighborhood.id}>
+                <span>{neighborhood.name}</span>
+              </div>
+            )
+          }
+        </div>
       </div>
     )
   }
 }
+
+// NEIGHBORHOODS LIST JSX

@@ -93,8 +93,8 @@ api.post('/city/:cityId/comparisons/sectionTitles', (req, res) => {
 });
 
 
-api.post('/city/:cityId/sectionContent', (req, res) => {
-	const {section, neighborhood, sectionIndex, neighborhoodIndex} = req.body;
+api.post('/wiki/sectionContent', (req, res) => {
+	const {neighborhood} = req.body;
 	const wikiTitle = neighborhood.neighborhood;
 	const wikiIndex = neighborhood.idx;
 
@@ -105,11 +105,11 @@ api.post('/city/:cityId/sectionContent', (req, res) => {
 			allowedTags: [],
 			allowedAttributes: []
 		}).replace(/\n/g, ' ').replace(/&quot;|\[edit\]/g, '').replace(/\[[0-9]*\]/g, '');
-		nodeSummary.summarize(wikiTitle, sanitizedContent, function(err, summary){
-			if (err) console.log('no good');
-			else res.send({content: summary, sectionIndex, neighborhoodIndex});
-		})
-		
+		res.send(sanitizedContent);
+		// nodeSummary.summarize(wikiTitle, sanitizedContent, function(err, summary){
+		// 	if (err) console.log('no good');
+		// 	else res.send(summary);
+		// })
 	})
 	.catch(err => {
 		console.log(err);
@@ -122,7 +122,7 @@ api.post('/comparisons/sectionContent', (req, res) => {
 	let queryObject = {}
 	let query = [];
 
-// 	// build a query for each criteria against each of the section content for the neighborhoods to search
+// build a query for each criteria against each of the section content for the neighborhoods to search
 	criteria.forEach(criterium => {
 		criterium.sectionsToSearch.forEach(section => {
 			section.neighborhoods.forEach(neighborhood => {
@@ -146,6 +146,8 @@ api.post('/comparisons/sectionContent', (req, res) => {
 // PROMISE ALL OPTION
 // api.post('/comparisons/sectionContent', (req, res) => {
 // 	const {criteriumName, section} = req.body;
+// 	console.log('CRITERIUM NAME', criteriumName)
+// 	console.log('SECTION', section)
 // 	let query = [];
 
 // 	// build a query for each criteria against each of the section content for the neighborhoods to search
@@ -159,17 +161,17 @@ api.post('/comparisons/sectionContent', (req, res) => {
 // 		query.push(singleQuery);
 // 	})
 
-// 	axios.post(
-// 		`http://api.cortical.io:80/rest/compare/bulk?retina_name=en_associative`,
-// 		query,
-// 		{headers: {'api-key': '64d8f960-6cae-11e7-b22d-93a4ae922ff1'}
-// 	})
-// 	.then(apiRes => {
-// 		res.send(apiRes.data);
-// 	})
-// 	.catch(err => {
-// 		console.log(err);
-// 	})
+// 	// axios.post(
+// 	// 	`http://api.cortical.io:80/rest/compare/bulk?retina_name=en_associative`,
+// 	// 	query,
+// 	// 	{headers: {'api-key': '64d8f960-6cae-11e7-b22d-93a4ae922ff1'}
+// 	// })
+// 	// .then(apiRes => {
+// 	// 	res.send(apiRes.data);
+// 	// })
+// 	// .catch(err => {
+// 	// 	console.log(err);
+// 	// })
 // });
 
 api.post('/neighborhoods/fingerprints', (req, res) => {

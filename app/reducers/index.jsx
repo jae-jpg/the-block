@@ -19,7 +19,8 @@ const initialState = {
   currentCityNeighborhoods: [],
   input: '',
   neighborhoodSections: [],
-  criteria: []
+  criteria: [],
+  status: 'Loading neighborhoods...'
   // ADD ADDITIONAL FIELDS HERE
 }
 
@@ -93,12 +94,12 @@ export function getNeighborhoodExtracts(city, neighborhoods){
       // maybe get rid of the next 3 lines and refactor the last .then
       .then(res => {
         neighborhood.wikiTitle = res.data
-        return axios.post(`/api/city/${city.id}/neighborhoods/wikiExtract`, {neighborhood, city})
-      })
-      .then(res => {
-        neighborhood.wikiExtract = res.data;
         dispatch(getNeighborhoodSections(city, neighborhood))
+        // return axios.post(`/api/city/${city.id}/neighborhoods/wikiExtract`, {neighborhood, city})
       })
+      // .then(res => {
+      //   neighborhood.wikiExtract = res.data;
+      // })
     })
   }
 }
@@ -122,56 +123,67 @@ export function rankNeighborhoods(){
   }
 }
 
-// 1: change this to a promise all
+
+
 export function getSectionTitleComparisons(){
   return function(dispatch, getState){
-    // REFACTOR THESE TO ALL PULL FROM THE GETSTATE RESULT OBJECT
-    const city = getState().currentCity;
-    const criteria = getState().criteria;
-    const sections = getState().neighborhoodSections;
-    const sectionTitles = sections.map(section => section.title)
-    criteria.forEach((criterium, idx) => {
-      return axios.post(`/api/city/${city.id}/comparisons/sectionTitles`, {criterium, sectionTitles})
-      .then(res => {
-        const results = res.data;
+    const {currentCity, criteria, neighborhoodSections} = getState();
+    const sectionTitles = neighborhoodSections.map(section => section.title)
 
-        let sectionsToSearch = sections.map((section, idx) => {
-          section.result = results[idx];
+    let promises = criteria.reduce((acc, criterium, idx) => {
+      let promise = axios.post(`/api/city/${currentCity.id}/comparisons/sectionTitles`, {criterium, sectionTitles})
+      return acc.concat(promise);
+    }, [])
+
+    Promise.all(promises)
+    .then(results => {
+      let newCriteria = _.cloneDeep(getState().criteria);
+
+      newCriteria.forEach((criterium, criteriumIdx) => {
+        let resultsForThisCriteria = results[criteriumIdx].data;
+        let sectionsToSearch = neighborhoodSections.map((section, idx) => {
+          section.result = resultsForThisCriteria[idx]
           return section;
         }).filter(section => {
-          // console.log('name', section.title, 'overlappingAll', section.result.overlappingAll, 'bool', section.result.overlappingAll > 100)
-          return section.result.weightedScoring > 30;
-        });
+          return section.result.overlappingAll > 120;          
+        })
+        criterium.sectionsToSearch = sectionsToSearch;
+      });
 
-        dispatch(updateCriterium(criterium, sectionsToSearch))
-        dispatch(getSectionContent(criterium, idx));
-      })
+      dispatch(updateCriteria(newCriteria));
+      dispatch(getSectionContent());
     })
   }
 }
 
 
 
-export function getSectionContent(criterium, criteriumIndex){
+export function getSectionContent(){
   return function(dispatch, getState){
     let promises = [];
-    
-    const city = getState().currentCity;
     const criteria = getState().criteria;
 
-    criterium.sectionsToSearch.forEach((section, sectionIndex) => {
-      section.neighborhoods.forEach((neighborhood, neighborhoodIndex) => {
-        let promise = axios.post(`/api/city/${city.id}/sectionContent`, {section, neighborhood, sectionIndex, neighborhoodIndex})
-        promises.push(promise);
-      })    
+    criteria.forEach(criterium => {
+      criterium.sectionsToSearch.forEach((section) => {
+        section.neighborhoods.forEach((neighborhood) => {
+          let promise = axios.post(`/api/wiki/sectionContent`, {neighborhood})
+          promises.push(promise);
+        })    
+      })
     })
 
     Promise.all(promises)
     .then(results => {
-      let newCriteria = getState().criteria;
-      results.forEach(result => {
-        let data = result.data;
-        newCriteria[criteriumIndex].sectionsToSearch[data.sectionIndex].neighborhoods[data.neighborhoodIndex].content = data.content;
+      let newCriteria = _.cloneDeep(getState().criteria);
+
+      let i = 0;
+      newCriteria.forEach((criterium, criteriumIdx) => {
+        criterium.sectionsToSearch.forEach((section, sectionIdx) => {
+          section.neighborhoods.forEach(neighborhood => {
+            neighborhood.content = results[i].data;
+            i++;
+          })
+        })
       })
       dispatch(updateCriteria(newCriteria));
       dispatch(getSectionContentComparisons());
@@ -185,6 +197,7 @@ export function getSectionContentComparisons(){
     const criteria = getState().criteria;
     axios.post(`/api/comparisons/sectionContent`, {criteria})
     .then(res => {
+      console.log('criteria', res.data);
       let results = res.data;
 
       let newCriteria = criteria
@@ -192,9 +205,9 @@ export function getSectionContentComparisons(){
       criteria.forEach((criterium, criteriumIndex) => {
         criterium.sectionsToSearch.forEach((section, sectionIndex) => {
           section.neighborhoods.forEach((neighborhood, neighborhoodIndex) => {
-            console.log('weighted scoring for:', neighborhood.neighborhood, results[i].weightedScoring)
-            console.log('left right scoring for:', neighborhood.neighborhood, results[i].overlappingLeftRight)
-            console.log('right left scoring for:', neighborhood.neighborhood, results[i].overlappingRightLeft)
+            // console.log('weighted scoring for:', neighborhood.neighborhood, results[i].weightedScoring)
+            // console.log('left right scoring for:', neighborhood.neighborhood, results[i].overlappingLeftRight)
+            // console.log('right left scoring for:', neighborhood.neighborhood, results[i].overlappingRightLeft)
             newCriteria[criteriumIndex].sectionsToSearch[sectionIndex].neighborhoods[neighborhoodIndex].score = results[i].weightedScoring;
             i++;
           })
@@ -216,7 +229,7 @@ export function getSectionContentComparisons(){
 //     let promises = [];
 //     criteria.forEach(criterium => {
 //       criterium.sectionsToSearch.forEach(section => {
-//         let promise = axios.post(`/api/comparisons/sectionContent`, {section: section})
+//         let promise = axios.post(`/api/comparisons/sectionContent`, {criteriumName: criterium.name, section: section})
 //         promises.push(promise);
 //       })
 //     });
@@ -260,7 +273,6 @@ export function mapScoresToNeighborhoods(){
     })
 
     neighborhoods = sortByScore(neighborhoods);
-
     dispatch(updateNeighborhoods(neighborhoods));
   }
 }
@@ -348,6 +360,61 @@ export default rootReducer;
 
 
 // OLD CODE
+
+// 1: change this to a promise all
+// export function getSectionTitleComparisons(){
+//   return function(dispatch, getState){
+//     // REFACTOR THESE TO ALL PULL FROM THE GETSTATE RESULT OBJECT
+//     const city = getState().currentCity;
+//     const criteria = getState().criteria;
+//     const sections = getState().neighborhoodSections;
+//     const sectionTitles = sections.map(section => section.title)
+//     criteria.forEach((criterium, idx) => {
+//       return axios.post(`/api/city/${city.id}/comparisons/sectionTitles`, {criterium, sectionTitles})
+//       .then(res => {
+//         const results = res.data;
+
+//         let sectionsToSearch = sections.map((section, idx) => {
+//           section.result = results[idx];
+//           return section;
+//         }).filter(section => {
+//           // console.log('name', section.title, 'overlappingAll', section.result.overlappingAll, 'bool', section.result.overlappingAll > 100)
+//           return section.result.overlappingAll > 120;
+//         });
+
+//         dispatch(updateCriterium(criterium, sectionsToSearch))
+//         dispatch(getSectionContent(criterium, idx));
+//       })
+//     })
+//   }
+// }
+
+// export function getSectionContent(criterium, criteriumIndex){
+//   return function(dispatch, getState){
+//     let promises = [];
+    
+//     const city = getState().currentCity;
+//     const criteria = getState().criteria;
+
+//     criterium.sectionsToSearch.forEach((section, sectionIndex) => {
+//       section.neighborhoods.forEach((neighborhood, neighborhoodIndex) => {
+//         let promise = axios.post(`/api/city/${city.id}/sectionContent`, {section, neighborhood, sectionIndex, neighborhoodIndex})
+//         promises.push(promise);
+//       })    
+//     })
+
+//     Promise.all(promises)
+//     .then(results => {
+//       let newCriteria = getState().criteria;
+//       results.forEach(result => {
+//         let data = result.data;
+//         newCriteria[criteriumIndex].sectionsToSearch[data.sectionIndex].neighborhoods[data.neighborhoodIndex].content = data.content;
+//       })
+//       dispatch(updateCriteria(newCriteria));
+//       dispatch(getSectionContentComparisons());
+//     })
+//   }
+// }
 
 // export function getSectionContent(criterium, criteriumIndex){
 //   return function(dispatch, getState){
