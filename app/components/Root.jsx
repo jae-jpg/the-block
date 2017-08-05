@@ -4,13 +4,16 @@ import jsonp from 'jsonp';
 import store from '../store'
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
-import InputForm from './InputForm'
-
+import InputForm from './InputForm';
+import Dropdown from './Dropdown';
+import Transition from 'react-motion-ui-pack';
+import { spring } from 'react-motion';
 
 export default class Root extends Component {
   constructor(){
     super();
     this.state = store.getState();
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentDidMount(){
@@ -23,75 +26,34 @@ export default class Root extends Component {
     this.unsubscribe();
   }
 
+  handleSubmit(event){
+    event.preventDefault();
+    this.props.history.push(`/city/${this.state.currentCity.id}`);
+  }
+
   render() {
     const {cityList} = this.state;
+
     return (
-      <div className="root-container">
-        <h1 className="root-item">Where would you like to live?</h1>
-        <input autoFocus className="root-item root-input"></input>
-      </div>
+      <Transition
+        component={false}
+        enter={{
+          opacity: 1,
+          translateX: spring(0, {stiffness: 400, damping: 20})
+        }}
+        leave={{
+          opacity: 0,
+          translateX: 250
+        }}
+      >
+        <div key="1" className="root-container">
+          <h1 className="root-item">Where would you like to live?</h1>
+          <form className="root-form" onSubmit={this.handleSubmit}>
+            <Dropdown cityList={this.state.cityList}/>
+            <button type="submit" className="root-submit-button"></button>
+          </form>
+        </div>
+      </Transition>
     )
   }
 }
-
-/**
- * GOOGLE PLACE SEARCH
- * 
- *     const apiRequest = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=AIzaSyCMnsW-JGKwjLVFI5bVH7g0eS_5nCKcbwg&location=40.705086,-74.009151&radius=500&type=lodging'
-    
-    var map;
-    var service;
-    var infowindow;
-
-    function initialize() {
-      var pyrmont = new google.maps.LatLng(40.705086,-74.009151);
-
-      map = new google.maps.Map(document.getElementById('main'), {
-          center: pyrmont,
-          zoom: 15
-        });
-
-      var request = {
-        location: pyrmont,
-        radius: '1500',
-        type: ['lodging'],
-        keyword: 'area'
-      };
-
-      service = new google.maps.places.PlacesService(map);
-      service.nearbySearch(request, search);
-    }
-
-    initialize();
-
-    function search(results, status){
-      console.log('all places results', results);
-      var placeIds = results.reduce(function(acc, el){
-        return acc.concat(el.place_id);
-      }, []);
-      console.log('place ids only:', placeIds);
-
-      var request = {
-        placeId: placeIds[0]
-      };
-
-      placeIds.forEach(placeId => {
-        service.getDetails({placeId}, details);
-
-        function details(place, status) {
-          console.log('place details:', place);
-          console.log('place detail reviews', place.reviews);
-        }
-      })
-    }
- * 
- */
-
-//  // OLD JSX
-//          <ul className="root-item cities-list">
-//           {
-//             cityList.map(city => 
-//               <li className="cities-item" key={city.id}><Link to={`/city/${city.id}`}>{city.name}</Link></li>
-//             )
-//           }
-//         </ul>

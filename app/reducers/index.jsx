@@ -4,23 +4,23 @@ import _ from 'lodash';
 
 const initialState = {
   cityList: [
-    {name: 'Manhattan', id: 'nyc'},
-    {name: 'Los Angeles', id: 'la'},
+    {name: 'Boston', id: 'bos'},    
     {name: 'Chicago', id: 'chi'},
+    {name: 'Denver', id: 'den'},
     {name: 'Houston', id: 'hou'},
+    {name: 'Los Angeles', id: 'la'},
+    {name: 'New York City', id: 'nyc'},
     {name: 'Philadelphia', id: 'philly'},
     {name: 'San Francisco', id: 'sf'},
     {name: 'Seattle', id: 'sea'},
-    {name: 'Denver', id: 'den'},
     {name: 'Washington, DC', id: 'dc'},
-    {name: 'Boston', id: 'bos'},    
   ],
   currentCity: {},
   currentCityNeighborhoods: [],
   input: '',
   neighborhoodSections: [],
   criteria: [],
-  status: 'Loading neighborhoods...'
+  status: 'Loading neighborhoods',
   // ADD ADDITIONAL FIELDS HERE
 }
 
@@ -35,6 +35,7 @@ const UPDATE_CRITERIUM = 'UPDATE_CRITERIUM'
 const UPDATE_CRITERIA = 'UPDATE_CRITERIA'
 const UPDATE_SCORE_AVERAGES = 'UPDATE_SCORE_AVERAGES';
 const UPDATE_NEIGHBORHOODS = 'UPDATE_NEIGHBORHOODS';
+const SET_STATUS = 'SET_STATUS';
 
 // action creators
 export function setCity(cityId){
@@ -73,14 +74,16 @@ export function updateNeighborhoods(neighborhoods){
   return {type: UPDATE_NEIGHBORHOODS, neighborhoods}
 }
 
+export function setStatus(status){
+  return {type: SET_STATUS, status}
+}
+
 // thunk creators
-
-// LOADING THE DATA FOR THE CHOSEN CITY
-
 export function getCityNeighborhoods(cityId){
   return function(dispatch, getState){
     return axios.get(`api/city/${cityId}/neighborhoods`)
     .then(res => {
+      dispatch(setStatus('Loading neighborhoods'));
       dispatch(setCityNeighborhoods(res.data));
       dispatch(getNeighborhoodExtracts(getState().currentCity, getState().currentCityNeighborhoods))
     })
@@ -93,13 +96,12 @@ export function getNeighborhoodExtracts(city, neighborhoods){
       return axios.post(`api/city/${city.id}/neighborhoods/wikiTitle`, {neighborhood, city})
       // maybe get rid of the next 3 lines and refactor the last .then
       .then(res => {
-        neighborhood.wikiTitle = res.data
+        neighborhood.wikiTitle = res.data.wikiTitle;
+        neighborhood.wikiSnippet = res.data.wikiSnippet;
+        neighborhood.wikiImage = res.data.wikiImage;
         dispatch(getNeighborhoodSections(city, neighborhood))
-        // return axios.post(`/api/city/${city.id}/neighborhoods/wikiExtract`, {neighborhood, city})
       })
-      // .then(res => {
-      //   neighborhood.wikiExtract = res.data;
-      // })
+
     })
   }
 }
@@ -109,7 +111,6 @@ export function getNeighborhoodSections(city, neighborhood){
     return axios.post(`/api/city/${city.id}/neighborhoods/wikiSections`, {neighborhood, city})
     .then(res => {
       const sections = res.data;
-      // add the neighborhood sections to the state
       dispatch(addNeighborhoodSections(sections, neighborhood))
     })
   }
@@ -122,8 +123,6 @@ export function rankNeighborhoods(){
     dispatch(getSectionTitleComparisons());
   }
 }
-
-
 
 export function getSectionTitleComparisons(){
   return function(dispatch, getState){
@@ -143,10 +142,21 @@ export function getSectionTitleComparisons(){
         let resultsForThisCriteria = results[criteriumIdx].data;
         let sectionsToSearch = neighborhoodSections.map((section, idx) => {
           section.result = resultsForThisCriteria[idx]
+
+          // THIS IS AN INTERMEDIATE LINE OF CODE - WHEN ALGORITHM IS FINETUNED, KEEP ONLY WHAT'S NEEDED
+          section.weightedResult = section.result.overlappingAll / section.result.sizeRight;
+
           return section;
         }).filter(section => {
-          return section.result.overlappingAll > 120;          
+          return section.result.overlappingAll > 100;          
         })
+
+        if (sectionsToSearch.length > 15) {
+          sectionsToSearch = sectionsToSearch.sort((a, b) => {
+            return b.weightedResult - a.weightedResult;
+          }).slice(0, 15);
+        }
+
         criterium.sectionsToSearch = sectionsToSearch;
       });
 
@@ -155,8 +165,6 @@ export function getSectionTitleComparisons(){
     })
   }
 }
-
-
 
 export function getSectionContent(){
   return function(dispatch, getState){
@@ -219,44 +227,6 @@ export function getSectionContentComparisons(){
   }
 }
 
-
-
-// PROMISE ALL OPTION
-// export function getSectionContentComparisons(){
-//   return function(dispatch, getState){
-//     const criteria = _.cloneDeep(getState().criteria);
-
-//     let promises = [];
-//     criteria.forEach(criterium => {
-//       criterium.sectionsToSearch.forEach(section => {
-//         let promise = axios.post(`/api/comparisons/sectionContent`, {criteriumName: criterium.name, section: section})
-//         promises.push(promise);
-//       })
-//     });
-
-//     Promise.all(promises)
-//     .then(results => {
-//       let resultsData = results.map(result => {
-//         return result.data;
-//       })
-
-//       let newCriteria = criteria
-
-//       criteria.forEach((criterium, criteriumIndex) => {
-//         criterium.sectionsToSearch.forEach((section, sectionIndex) => {
-//           section.neighborhoods.forEach((neighborhood, neighborhoodIndex) => {
-//             const score = resultsData[sectionIndex][neighborhoodIndex].weightedScoring;
-//             newCriteria[criteriumIndex].sectionsToSearch[sectionIndex].neighborhoods[neighborhoodIndex].score = score;
-//           })
-//         })
-//       })
-
-//       dispatch(updateCriteria(newCriteria))
-//       dispatch(mapScoresToNeighborhoods());
-//     });
-//   }
-// }
-
 export function mapScoresToNeighborhoods(){
   return function(dispatch, getState) {    
     // pull the neighborhoods from the current state
@@ -274,6 +244,7 @@ export function mapScoresToNeighborhoods(){
 
     neighborhoods = sortByScore(neighborhoods);
     dispatch(updateNeighborhoods(neighborhoods));
+    dispatch(setStatus('Results loaded'));
   }
 }
 
@@ -348,8 +319,9 @@ const rootReducer = function(state = initialState, action) {
           newNeighborhoodSections[idx].neighborhoods.push({neighborhood: neighborhood.wikiTitle, idx: section.idx})
         }
       })
-
-      return Object.assign({}, state, {}, {neighborhoodSections: newNeighborhoodSections});
+      return Object.assign({}, state, {neighborhoodSections: newNeighborhoodSections});
+    case SET_STATUS:
+      return Object.assign({}, state, {status: action.status});
     case UPDATE_NEIGHBORHOODS:
       return Object.assign({}, state, {currentCityNeighborhoods: action.neighborhoods});
     default: return state
@@ -434,7 +406,7 @@ export default rootReducer;
 //   }
 // }
 
-
+// THIS IS NOT BEING USED ANYMORE
 // export function getFingerprintComparison(city, neighborhoods, input){
 //   return function(dispatch){
 //     neighborhoods.forEach((neighborhood, idx) => {
@@ -443,5 +415,41 @@ export default rootReducer;
 //         console.log(idx, 'result for:', neighborhood.name, res.data);
 //       })
 //     })
+//   }
+// }
+
+// PROMISE ALL OPTION FOR GET SECTION CONTENT
+// export function getSectionContentComparisons(){
+//   return function(dispatch, getState){
+//     const criteria = _.cloneDeep(getState().criteria);
+
+//     let promises = [];
+//     criteria.forEach(criterium => {
+//       criterium.sectionsToSearch.forEach(section => {
+//         let promise = axios.post(`/api/comparisons/sectionContent`, {criteriumName: criterium.name, section: section})
+//         promises.push(promise);
+//       })
+//     });
+
+//     Promise.all(promises)
+//     .then(results => {
+//       let resultsData = results.map(result => {
+//         return result.data;
+//       })
+
+//       let newCriteria = criteria
+
+//       criteria.forEach((criterium, criteriumIndex) => {
+//         criterium.sectionsToSearch.forEach((section, sectionIndex) => {
+//           section.neighborhoods.forEach((neighborhood, neighborhoodIndex) => {
+//             const score = resultsData[sectionIndex][neighborhoodIndex].weightedScoring;
+//             newCriteria[criteriumIndex].sectionsToSearch[sectionIndex].neighborhoods[neighborhoodIndex].score = score;
+//           })
+//         })
+//       })
+
+//       dispatch(updateCriteria(newCriteria))
+//       dispatch(mapScoresToNeighborhoods());
+//     });
 //   }
 // }

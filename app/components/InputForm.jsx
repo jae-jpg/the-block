@@ -1,5 +1,5 @@
 import React from 'react';
-import store, {newInput, getFingerprintComparison, setCriteria, rankNeighborhoods} from '../store'
+import store, {newInput, setCriteria, rankNeighborhoods, setStatus} from '../store'
 
 export default class InputForm extends React.Component {
   constructor(){
@@ -26,9 +26,9 @@ export default class InputForm extends React.Component {
 
   handleSubmit(event){
     event.preventDefault();
+    store.dispatch(setStatus('Display city'));
     store.dispatch(setCriteria());
     store.dispatch(rankNeighborhoods());
-    // store.dispatch(getFingerprintComparison(this.state.currentCity, this.state.currentCityNeighborhoods, this.state.input));
   }
 
   render(){

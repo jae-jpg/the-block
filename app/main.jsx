@@ -7,7 +7,7 @@ import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 
 import store from './store'
 import Root from './components/Root'
-import SingleCity from './components/SingleCity' 
+import SingleCity from './components/SingleCity'
 
 render (
   <Provider store={store}>

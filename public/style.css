@@ -28,6 +28,10 @@ h1 {
   margin-bottom: 200px;
 }
 
+datalist {
+  font-size: 40px;
+}
+
 .cities-list {
   display: flex;
   flex-wrap: wrap;
@@ -91,3 +95,108 @@ ul {
   margin-bottom: 20px;
   text-align: center;
 }
+
+.root-submit-button {
+  border: 0px;
+  height: 37px;
+  width: 37px;
+  margin: 0px 0px;
+  padding: 0px 0px;
+  background-color: burlywood;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.root-form {
+  margin: 0px;
+  padding: 0px;
+  display: flex;
+}
+
+
+.results-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.secondary-results-container {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  padding-left: 100px;
+  padding-right: 100px;
+}
+
+.secondary-results-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 25%;
+  height: 500px;
+  text-align: center;
+  background-color: white;
+  padding-top: 20px;
+  height: 250px;
+  border: 5px solid lightgray;
+}
+
+img {
+  max-width: 80%;
+}
+
+hr {
+  border: 2.5px solid lightgray;
+  width: 98%;
+}
+
+
+/* CSS TRANSITIONS */
+
+/* LANDING PAGE */
+/*  
+.landing-appear {
+  opacity: 0.01;
+}
+
+.landing-appear.landing-appear-active {
+  opacity: 1;
+  transition: opacity .5s ease-in;
+} 
+
+.landing-leave {
+  transform: translate(0%);
+}
+
+ .landing-leave {
+  transform: translate(0%);
+} 
+
+.landing-leave.landing-leave-active {
+  transform: translate(-100%);
+  transition: transform 1000ms ease-in-out;
+} 
+ */
+
+
+
+/* NEXT PAGE */
+/*
+.city-appear {
+  transform: translate(100%); 
+} 
+
+.city-appear.city-appear-active {
+  transform: translate(0%);
+  transition: transform 1000ms ease-in-out;
+}  
+
+.city-leave {
+  transform: translate(0%);
+}
+
+.city-leave.city-leave-active {
+  transform: translate(-100%);
+  transition: transform 1000ms ease-in-out;
+}
+*/
