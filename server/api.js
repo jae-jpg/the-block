@@ -20,7 +20,7 @@ api.get('/city/:cityId/neighborhoods', (req, res) => {
 })
 
 // get the wikipedia article for all neighborhoods in a city and place on neighborhoods object
-api.post('/city/:cityId/neighborhoods/wikiTitle', (req, res) => {
+api.post('/city/:cityId/neighborhoods/wikiData', (req, res) => {
 	// extract the neighborhood and city name, and replace all spaces with %20 for insertion into query string
 	let {neighborhood, city} = req.body;
 	let neighborhoodName = neighborhood.name.replace(/ /g, '%20').replace(/-/g, '%E2%80%93');
@@ -77,7 +77,7 @@ api.post('/city/:cityId/neighborhoods/wikiTitle', (req, res) => {
 		const wikiText = sanitizeHtml(text, {
 			allowedTags: [],
 			allowedAttributes: []
-		}).replace(/\n/g, ' ');
+		}).replace(/\n/g, ' ').slice(0, 8000);
 		result.wikiText = wikiText;
 		res.send(result);
 	})
@@ -87,93 +87,12 @@ api.post('/city/:cityId/neighborhoods/wikiTitle', (req, res) => {
 	})
 })
 
-
-api.post('/city/:cityId/neighborhoods/wikiSections', (req, res) => {
-	let {neighborhood, city} = req.body;
-	axios.get(`https://en.wikipedia.org/w/api.php?action=parse&format=json&page=${neighborhood.wikiTitle}&prop=sections`)
-	.then(apiRes => {
-		let sections = apiRes.data.parse.sections;
-		// instead of just mapping this to the section headings, map it to a series of objects like {title: 'section title', idx: 'section idx'}
-		sections = sections.map(section => ({title: section.line, idx: section.index}));
-		// sections = sections.map(section => section.line);
-		res.send(sections);
-	})
-})
-
-api.post('/city/:cityId/comparisons/sectionTitles', (req, res) => {
-	let {criterium, sectionTitles} = req.body;
-
-	const query = sectionTitles.map(section => {
-		return [{"text": criterium.name}, {"text": section}]
-	});
-
-	axios.post(
-		`http://api.cortical.io:80/rest/compare/bulk?retina_name=en_associative`,
-		query,
-		{headers: {'api-key': '64d8f960-6cae-11e7-b22d-93a4ae922ff1'}
-	})
-	.then(apiRes => {
-		res.send(apiRes.data);
-	})
-	.catch(err => {
-		console.log(err);
-	})
-});
-
-api.post('/wiki/sectionContent', (req, res) => {
-	const {neighborhood} = req.body;
-	const wikiTitle = neighborhood.neighborhood;
-	const wikiIndex = neighborhood.idx;
-
-	axios.get(`https://en.wikipedia.org/w/api.php?action=parse&format=json&page=${wikiTitle}&prop=text&section=${wikiIndex}`)
-	.then(apiRes => {
-		const sectionContent = apiRes.data.parse.text['*'];
-		const sanitizedContent = sanitizeHtml(sectionContent, {
-			allowedTags: [],
-			allowedAttributes: []
-		}).replace(/\n/g, ' ').replace(/&quot;|\[edit\]/g, '').replace(/\[[0-9]*\]/g, '');
-		res.send(sanitizedContent);
-	})
-	.catch(err => {
-		console.log(err);
-	})
-});
-
-// BULK OPTION
-api.post('/comparisons/sectionContent', (req, res) => {
-	const {criteria} = req.body;
-	let queryObject = {}
-	let query = [];
-
-// build a query for each criteria against each of the section content for the neighborhoods to search
-	criteria.forEach(criterium => {
-		criterium.sectionsToSearch.forEach(section => {
-			section.neighborhoods.forEach(neighborhood => {
-				const singleQuery = [{"text": criterium.name}, {"text": neighborhood.content}];
-				query.push(singleQuery);
-			})
-		})
-	})
-
-	axios.post(
-		`http://api.cortical.io:80/rest/compare/bulk?retina_name=en_synonymous`,
-		query,
-		{headers: {'api-key': '64d8f960-6cae-11e7-b22d-93a4ae922ff1'}
-	})
-	.then(apiRes => {
-		res.send(apiRes.data);
-	})
-	.catch(err => {
-		console.log(err.data);
-	})
-});
-
 api.post('/comparisons/overall', (req, res) => {
-	const {input, neighborhoods} = req.body;
+	const {criterium, neighborhoods, option1} = req.body;
 	let query = [];
 
 	neighborhoods.forEach(neighborhood => {
-		const singleQuery = [{"text": input}, {"text": neighborhood.wikiSnippet}]
+		const singleQuery = [{"text": criterium.name}, {"text": neighborhood[option1]}]
 		query.push(singleQuery);
 	})
 
@@ -191,82 +110,3 @@ api.post('/comparisons/overall', (req, res) => {
 });
 
 module.exports = api
-
-//OLD CODE
-
-// api.post('/city/:cityId/neighborhoods/wikiExtract', (req, res) => {
-// 	let {neighborhood, city} = req.body;
-// 	// make wikipedia request for the article extract
-// 	axios.get(`https://en.wikipedia.org/w/api.php?action=query&format=json&titles=${neighborhood.wikiTitle}&prop=extracts`)
-// 	.then(apiRes => {
-// 		const pages = apiRes.data.query.pages;
-// 		const keys = Object.keys(pages);
-// 		const extract = pages[keys[0]].extract;
-// 		const sanitizedExtract = sanitizeHtml(extract, {
-// 			allowedTags: [],
-// 			allowedAttributes: []
-// 		}).replace(/\n/g, ' ');
-// 		res.send(sanitizedExtract);
-// 	})
-// 	.catch(err => {
-// 		console.log('Wiki extract request failed at neighborhood:', neighborhood.name)
-// 		// console.log(err);
-// 	})
-// })
-
-// PROMISE ALL OPTION
-// api.post('/comparisons/sectionContent', (req, res) => {
-// 	const {criteriumName, section} = req.body;
-// 	console.log('CRITERIUM NAME', criteriumName)
-// 	console.log('SECTION', section)
-// 	let query = [];
-
-// 	// build a query for each criteria against each of the section content for the neighborhoods to search
-// 	section.neighborhoods.forEach(neighborhood => {
-// 		const neighborhoodContent = neighborhood.content;
-
-// 		const text1 = {"text": criteriumName};
-// 		const text2 = {"text": neighborhoodContent}
-// 		const singleQuery = [text1, text2];
-// 		console.log(singleQuery);
-// 		query.push(singleQuery);
-// 	})
-
-// 	// axios.post(
-// 	// 	`http://api.cortical.io:80/rest/compare/bulk?retina_name=en_associative`,
-// 	// 	query,
-// 	// 	{headers: {'api-key': '64d8f960-6cae-11e7-b22d-93a4ae922ff1'}
-// 	// })
-// 	// .then(apiRes => {
-// 	// 	res.send(apiRes.data);
-// 	// })
-// 	// .catch(err => {
-// 	// 	console.log(err);
-// 	// })
-// });
-
-// not using this anymore -- was for beta
-// api.post('/neighborhoods/fingerprints', (req, res) => {
-// 	let {neighborhood, input} = req.body;
-	
-// 	// FIX THIS!!!!!!!!! SHOULDN'T HAVE TO RUN THIS LOGIC!!! MAYBE FINETUNE METHOD OF GETTING THE WIKI ARTICLE
-
-// 	if (neighborhood.wikiExtract) {
-// 		const text1 = {"text": input};
-// 		const text2 = {"text": neighborhood.wikiExtract}
-
-// 		axios.post(
-// 			`http://api.cortical.io:80/rest/compare?retina_name=en_associative`,
-// 			[text1, text2],
-// 			{headers: {'api-key': '64d8f960-6cae-11e7-b22d-93a4ae922ff1'}
-// 		})
-// 		.then(apiRes => {
-// 			res.send(apiRes.data);
-// 		})
-// 		.catch(err => {
-// 			console.log(err);
-// 		})
-// 	} else {
-// 		res.send(null);
-// 	}
-// });

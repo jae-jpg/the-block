@@ -98,197 +98,62 @@ export function getCityNeighborhoods(cityId){
 export function getNeighborhoodData(city, neighborhoods){
   return function(dispatch){
     neighborhoods.forEach((neighborhood, idx) => {
-      return axios.post(`api/city/${city.id}/neighborhoods/wikiTitle`, {neighborhood, city})
+      return axios.post(`api/city/${city.id}/neighborhoods/wikiData`, {neighborhood, city})
       .then(res => {
         neighborhood.wikiTitle = res.data.wikiTitle;
         neighborhood.wikiSnippet = res.data.wikiSnippet;
         neighborhood.wikiImage = res.data.wikiImage;
         neighborhood.wikiText = res.data.wikiText;
-        dispatch(getNeighborhoodSections(city, neighborhood))
       })
     })
+    dispatch(setStatus('Neighborhoods loaded'))
   }
 }
-
-export function getNeighborhoodSections(city, neighborhood){
-  return function(dispatch){
-    return axios.post(`/api/city/${city.id}/neighborhoods/wikiSections`, {neighborhood, city})
-    .then(res => {
-      const sections = res.data;
-      dispatch(addNeighborhoodSections(sections, neighborhood))
-      dispatch(setStatus('Neighborhoods loaded'))
-    })
-  }
-}
-
-// RECEIVE THE QUERY AND RANKING THE ITEMS
 
 export function rankNeighborhoods(){
   return function(dispatch){
-    dispatch(getSectionTitleComparisons());
+    console.log('ranking neighborhoods...');
+    dispatch(getIndividualComparisons('wikiSnippet', 'wikiText'));
   }
 }
 
-export function getSectionTitleComparisons(){
-  return function(dispatch, getState){
-    const {currentCity, criteria, neighborhoodSections} = getState();
-    const sectionTitles = neighborhoodSections.map(section => section.title)
-
-    let promises = criteria.reduce((acc, criterium, idx) => {
-      let promise = axios.post(`/api/city/${currentCity.id}/comparisons/sectionTitles`, {criterium, sectionTitles})
-      return acc.concat(promise);
-    }, [])
-
-    Promise.all(promises)
-    .then(results => {
-      let newCriteria = _.cloneDeep(getState().criteria);
-
-      newCriteria.forEach((criterium, criteriumIdx) => {
-        let resultsForThisCriteria = results[criteriumIdx].data;
-        let sectionsToSearch = neighborhoodSections.map((section, idx) => {
-          section.result = resultsForThisCriteria[idx]
-
-          // THIS IS AN INTERMEDIATE LINE OF CODE - WHEN ALGORITHM IS FINETUNED, KEEP ONLY WHAT'S NEEDED
-          section.weightedResult = section.result.overlappingAll / section.result.sizeRight;
-
-          return section;
-        }).filter(section => {
-          return section.result.overlappingAll > 100;          
-        })
-
-        if (sectionsToSearch.length > 15) {
-          sectionsToSearch = sectionsToSearch.sort((a, b) => {
-            return b.weightedResult - a.weightedResult;
-          }).slice(0, 15);
-        }
-
-        criterium.sectionsToSearch = sectionsToSearch;
-      });
-
-      dispatch(updateCriteria(newCriteria));
-      dispatch(getSectionContent());
-    })
-  }
-}
-
-export function getSectionContent(){
-  return function(dispatch, getState){
-    let promises = [];
-    const criteria = getState().criteria;
-
-    criteria.forEach(criterium => {
-      criterium.sectionsToSearch.forEach((section) => {
-        section.neighborhoods.forEach((neighborhood) => {
-          let promise = axios.post(`/api/wiki/sectionContent`, {neighborhood})
-          promises.push(promise);
-        })    
-      })
-    })
-
-    Promise.all(promises)
-    .then(results => {
-      let newCriteria = _.cloneDeep(getState().criteria);
-
-      let i = 0;
-      newCriteria.forEach((criterium, criteriumIdx) => {
-        criterium.sectionsToSearch.forEach((section, sectionIdx) => {
-          section.neighborhoods.forEach(neighborhood => {
-            neighborhood.content = results[i].data;
-            i++;
-          })
-        })
-      })
-      dispatch(updateCriteria(newCriteria));
-      dispatch(getSectionContentComparisons());
-    })
-  }
-}
-
-// BULK OPTION
-export function getSectionContentComparisons(){
-  return function(dispatch, getState){
-    const criteria = getState().criteria;
-    axios.post(`/api/comparisons/sectionContent`, {criteria})
-    .then(res => {
-      console.log('criteria', res.data);
-      let results = res.data;
-
-      let newCriteria = criteria
-      let i = 0;
-      criteria.forEach((criterium, criteriumIndex) => {
-        criterium.sectionsToSearch.forEach((section, sectionIndex) => {
-          section.neighborhoods.forEach((neighborhood, neighborhoodIndex) => {
-            // console.log('weighted scoring for:', neighborhood.neighborhood, results[i].weightedScoring)
-            // console.log('left right scoring for:', neighborhood.neighborhood, results[i].overlappingLeftRight)
-            // console.log('right left scoring for:', neighborhood.neighborhood, results[i].overlappingRightLeft)
-            newCriteria[criteriumIndex].sectionsToSearch[sectionIndex].neighborhoods[neighborhoodIndex].score = results[i].weightedScoring * section.result.weightedScoring;
-            i++;
-          })
-        })
-      })
-      dispatch(updateCriteria(newCriteria))
-      dispatch(getOverallComparison());
-    })
-  }
-}
-
-export function getOverallComparison(){
+export function getIndividualComparisons(option1, option2){
   return function (dispatch, getState){
-    console.log('got to overall');
-    const neighborhoods = getState().currentCityNeighborhoods;
-    const input = getState().input;
+    let neighborhoods = _.cloneDeep(getState().currentCityNeighborhoods);
+    const criteria = getState().criteria;
+
+    let promises = [];
     
-    axios.post(`/api/comparisons/overall`, {input, neighborhoods})
+    criteria.forEach(criterium => {
+      const promise = axios.post(`/api/comparisons/overall`, {criterium, neighborhoods, option1})
+      promises.push(promise)
+    })
+    
+    Promise.all(promises)
     .then(res => {
-      console.log('got some data:', res.data);
-      let newNeighborhoods = neighborhoods.map((neighborhood, idx) => {
-        neighborhood.overallScore = res.data[idx].weightedScoring;
-        return neighborhood;
+      criteria.forEach((criterium, criteriumIdx) => {
+        neighborhoods = neighborhoods.map((neighborhood, neighborhoodIdx) => {
+          if (!neighborhood.scores) neighborhood.scores = [];
+          console.log(criterium.name, neighborhood.name, res[criteriumIdx].data[neighborhoodIdx])
+          neighborhood.scores.push(res[criteriumIdx].data[neighborhoodIdx].weightedScoring);
+          return neighborhood;
+        })
       })
 
-      dispatch(updateNeighborhoods(newNeighborhoods));
-      dispatch(mapScoresToNeighborhoods());
+      if (option2) {
+        dispatch(getIndividualComparisons(option2));
+      } else {
+        neighborhoods = neighborhoods.map(neighborhood => {
+          neighborhood.averageScore = findAverage(neighborhood.scores);
+          return neighborhood;
+        });
+
+        neighborhoods = sortByScore(neighborhoods);
+        dispatch(updateNeighborhoods(neighborhoods));
+        dispatch(setStatus('Results loaded'));
+      }
     })
-  }
-}
-
-export function mapScoresToNeighborhoods(){
-  return function(dispatch, getState) {    
-    // pull the neighborhoods from the current state
-    var neighborhoods = _.cloneDeep(getState().currentCityNeighborhoods);
-    var criteria = _.cloneDeep(getState().criteria)
-
-    // loop through the state neighborhoods, and find wherever that neighborhood is stored under different criteria
-    neighborhoods = neighborhoods.map((neighborhood) => {
-      const scores = findScores(neighborhood.wikiTitle, criteria);
-      const averageScore = findAverage(scores);
-      const finalScore = ((averageScore / 10) + neighborhood.overallScore) / 2
-      neighborhood.scores = scores;
-      neighborhood.averageScore = averageScore;
-      neighborhood.finalScore = finalScore;
-      return neighborhood;
-    })
-
-    neighborhoods = sortByScore(neighborhoods);
-    dispatch(updateNeighborhoods(neighborhoods));
-    dispatch(setStatus('Results loaded'));
-  }
-}
-
-function findScores(wikiTitle, criteria){
-  var scores = [];
-
-  criteria.forEach(criterium => {
-    criterium.sectionsToSearch.forEach(section => {
-      let criteriaInstances = section.neighborhoods.filter(neighborhood => {
-        return neighborhood.neighborhood === wikiTitle;
-      })
-      criteriaInstances.forEach(instance => {
-        scores.push(instance.score);
-      })
-    })
-  })
-  return scores;
+  } 
 }
 
 function findAverage(array){
@@ -303,9 +168,32 @@ function findAverage(array){
 
 function sortByScore(neighborhoods){
   return neighborhoods.sort((a, b) => {
-    return b.overallScore - a.overallScore
+    return b.averageScore - a.averageScore;
   })
 }
+
+// IF I USE THIS, I NEED TO MODIFY WHAT'S BEING USED IN THE REQUEST BODY API ROUTE
+// export function getOverallComparisons(){
+//   return function (dispatch, getState){
+//     let neighborhoods = _.cloneDeep(getState().currentCityNeighborhoods);
+//     const input = getState().input;
+    
+//     axios.post(`/api/comparisons/overall`, {input, neighborhoods})
+//     .then(res => {
+//       let newNeighborhoods = neighborhoods.map((neighborhood, idx) => {
+//         neighborhood.overallScore = res.data[idx].weightedScoring;
+//         return neighborhood;
+//       })
+
+//       neighborhoods = sortByScore(neighborhoods);
+//       dispatch(updateNeighborhoods(neighborhoods));
+//       dispatch(setStatus('Results loaded'));
+//     })
+//   }
+// }
+
+
+
 
 
 const rootReducer = function(state = initialState, action) {
@@ -481,4 +369,21 @@ export default rootReducer;
 //       dispatch(mapScoresToNeighborhoods());
 //     });
 //   }
+// }
+
+// CRITERIA BASED APPROACH WHERE I NEED TO FIND THE SCORES FOR EACH NEIGHBORHOOD
+// function findScores(wikiTitle, criteria){
+//   var scores = [];
+
+//   criteria.forEach(criterium => {
+//     criterium.sectionsToSearch.forEach(section => {
+//       let criteriaInstances = section.neighborhoods.filter(neighborhood => {
+//         return neighborhood.neighborhood === wikiTitle;
+//       })
+//       criteriaInstances.forEach(instance => {
+//         scores.push(instance.score);
+//       })
+//     })
+//   })
+//   return scores;
 // }
