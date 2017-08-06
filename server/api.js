@@ -3,7 +3,6 @@ const api = require('express').Router()
 const db = require('../db')
 const axios = require('axios');
 const sanitizeHtml = require('sanitize-html')
-const nodeSummary = require('node-summary');
 const md5 = require('md5');
 
 api.get('/hello', (req, res) => res.send({hello: 'world'}))
@@ -60,10 +59,26 @@ api.post('/city/:cityId/neighborhoods/wikiTitle', (req, res) => {
 		const pages = apiRes.data.query.pages;
 		const keys = Object.keys(pages);
 		const pageImage = pages[keys[0]].pageimage;
-		const hashedImage = md5(pageImage)
+		if (pageImage) {
+			const hashedImage = md5(pageImage)
 
-		const wikiImage = `https://upload.wikimedia.org/wikipedia/commons/${hashedImage[0]}/${hashedImage[0]}${hashedImage[1]}/${pageImage}`
-		result.wikiImage = wikiImage;
+			const wikiImage = `https://upload.wikimedia.org/wikipedia/commons/${hashedImage[0]}/${hashedImage[0]}${hashedImage[1]}/${pageImage}`
+			result.wikiImage = wikiImage;
+		} else {
+			result.wikiImage = 'http://img-aws.ehowcdn.com/560x560p/photos.demandstudios.com/getty/article/152/77/87578869.jpg';
+		}
+		
+		return axios.get(`https://en.wikipedia.org/w/api.php?action=query&format=json&titles=${result.wikiTitle}&prop=revisions&rvprop=content`)
+	})
+	.then(apiRes => {
+		const pages = apiRes.data.query.pages;
+		const keys = Object.keys(pages);
+		const text = pages[keys[0]].revisions[0]['*'];
+		const wikiText = sanitizeHtml(text, {
+			allowedTags: [],
+			allowedAttributes: []
+		}).replace(/\n/g, ' ');
+		result.wikiText = wikiText;
 		res.send(result);
 	})
 	.catch(err => {
@@ -72,25 +87,6 @@ api.post('/city/:cityId/neighborhoods/wikiTitle', (req, res) => {
 	})
 })
 
-api.post('/city/:cityId/neighborhoods/wikiExtract', (req, res) => {
-	let {neighborhood, city} = req.body;
-	// make wikipedia request for the article extract
-	axios.get(`https://en.wikipedia.org/w/api.php?action=query&format=json&titles=${neighborhood.wikiTitle}&prop=extracts`)
-	.then(apiRes => {
-		const pages = apiRes.data.query.pages;
-		const keys = Object.keys(pages);
-		const extract = pages[keys[0]].extract;
-		const sanitizedExtract = sanitizeHtml(extract, {
-			allowedTags: [],
-			allowedAttributes: []
-		}).replace(/\n/g, ' ');
-		res.send(sanitizedExtract);
-	})
-	.catch(err => {
-		console.log('Wiki extract request failed at neighborhood:', neighborhood.name)
-		// console.log(err);
-	})
-})
 
 api.post('/city/:cityId/neighborhoods/wikiSections', (req, res) => {
 	let {neighborhood, city} = req.body;
@@ -124,7 +120,6 @@ api.post('/city/:cityId/comparisons/sectionTitles', (req, res) => {
 	})
 });
 
-
 api.post('/wiki/sectionContent', (req, res) => {
 	const {neighborhood} = req.body;
 	const wikiTitle = neighborhood.neighborhood;
@@ -138,10 +133,6 @@ api.post('/wiki/sectionContent', (req, res) => {
 			allowedAttributes: []
 		}).replace(/\n/g, ' ').replace(/&quot;|\[edit\]/g, '').replace(/\[[0-9]*\]/g, '');
 		res.send(sanitizedContent);
-		// nodeSummary.summarize(wikiTitle, sanitizedContent, function(err, summary){
-		// 	if (err) console.log('no good');
-		// 	else res.send(summary);
-		// })
 	})
 	.catch(err => {
 		console.log(err);
@@ -177,6 +168,51 @@ api.post('/comparisons/sectionContent', (req, res) => {
 	})
 });
 
+api.post('/comparisons/overall', (req, res) => {
+	const {input, neighborhoods} = req.body;
+	let query = [];
+
+	neighborhoods.forEach(neighborhood => {
+		const singleQuery = [{"text": input}, {"text": neighborhood.wikiSnippet}]
+		query.push(singleQuery);
+	})
+
+	axios.post(
+		`http://api.cortical.io:80/rest/compare/bulk?retina_name=en_associative`,
+		query,
+		{headers: {'api-key': '64d8f960-6cae-11e7-b22d-93a4ae922ff1'}
+	})
+	.then(apiRes => {
+		res.send(apiRes.data);
+	})
+	.catch(err => {
+		console.log(err);
+	})
+});
+
+module.exports = api
+
+//OLD CODE
+
+// api.post('/city/:cityId/neighborhoods/wikiExtract', (req, res) => {
+// 	let {neighborhood, city} = req.body;
+// 	// make wikipedia request for the article extract
+// 	axios.get(`https://en.wikipedia.org/w/api.php?action=query&format=json&titles=${neighborhood.wikiTitle}&prop=extracts`)
+// 	.then(apiRes => {
+// 		const pages = apiRes.data.query.pages;
+// 		const keys = Object.keys(pages);
+// 		const extract = pages[keys[0]].extract;
+// 		const sanitizedExtract = sanitizeHtml(extract, {
+// 			allowedTags: [],
+// 			allowedAttributes: []
+// 		}).replace(/\n/g, ' ');
+// 		res.send(sanitizedExtract);
+// 	})
+// 	.catch(err => {
+// 		console.log('Wiki extract request failed at neighborhood:', neighborhood.name)
+// 		// console.log(err);
+// 	})
+// })
 
 // PROMISE ALL OPTION
 // api.post('/comparisons/sectionContent', (req, res) => {
@@ -209,32 +245,28 @@ api.post('/comparisons/sectionContent', (req, res) => {
 // 	// })
 // });
 
-api.post('/neighborhoods/fingerprints', (req, res) => {
-	let {neighborhood, input} = req.body;
+// not using this anymore -- was for beta
+// api.post('/neighborhoods/fingerprints', (req, res) => {
+// 	let {neighborhood, input} = req.body;
 	
-	// FIX THIS!!!!!!!!! SHOULDN'T HAVE TO RUN THIS LOGIC!!! MAYBE FINETUNE METHOD OF GETTING THE WIKI ARTICLE
+// 	// FIX THIS!!!!!!!!! SHOULDN'T HAVE TO RUN THIS LOGIC!!! MAYBE FINETUNE METHOD OF GETTING THE WIKI ARTICLE
 
-	if (neighborhood.wikiExtract) {
-		const text1 = {"text": input};
-		const text2 = {"text": neighborhood.wikiExtract}
+// 	if (neighborhood.wikiExtract) {
+// 		const text1 = {"text": input};
+// 		const text2 = {"text": neighborhood.wikiExtract}
 
-		axios.post(
-			`http://api.cortical.io:80/rest/compare?retina_name=en_associative`,
-			[text1, text2],
-			{headers: {'api-key': '64d8f960-6cae-11e7-b22d-93a4ae922ff1'}
-		})
-		.then(apiRes => {
-			res.send(apiRes.data);
-		})
-		.catch(err => {
-			console.log(err);
-		})
-	} else {
-		res.send(null);
-	}
-});
-
-
-
-
-module.exports = api
+// 		axios.post(
+// 			`http://api.cortical.io:80/rest/compare?retina_name=en_associative`,
+// 			[text1, text2],
+// 			{headers: {'api-key': '64d8f960-6cae-11e7-b22d-93a4ae922ff1'}
+// 		})
+// 		.then(apiRes => {
+// 			res.send(apiRes.data);
+// 		})
+// 		.catch(err => {
+// 			console.log(err);
+// 		})
+// 	} else {
+// 		res.send(null);
+// 	}
+// });

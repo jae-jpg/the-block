@@ -36,6 +36,7 @@ const UPDATE_CRITERIA = 'UPDATE_CRITERIA'
 const UPDATE_SCORE_AVERAGES = 'UPDATE_SCORE_AVERAGES';
 const UPDATE_NEIGHBORHOODS = 'UPDATE_NEIGHBORHOODS';
 const SET_STATUS = 'SET_STATUS';
+const CLEAR_STATE = 'CLEAR_STATE';
 
 // action creators
 export function setCity(cityId){
@@ -78,6 +79,10 @@ export function setStatus(status){
   return {type: SET_STATUS, status}
 }
 
+export function clearState(){
+  return {type: CLEAR_STATE}
+}
+
 // thunk creators
 export function getCityNeighborhoods(cityId){
   return function(dispatch, getState){
@@ -85,23 +90,22 @@ export function getCityNeighborhoods(cityId){
     .then(res => {
       dispatch(setStatus('Loading neighborhoods'));
       dispatch(setCityNeighborhoods(res.data));
-      dispatch(getNeighborhoodExtracts(getState().currentCity, getState().currentCityNeighborhoods))
+      dispatch(getNeighborhoodData(getState().currentCity, getState().currentCityNeighborhoods))
     })
   }
 }
 
-export function getNeighborhoodExtracts(city, neighborhoods){
+export function getNeighborhoodData(city, neighborhoods){
   return function(dispatch){
     neighborhoods.forEach((neighborhood, idx) => {
       return axios.post(`api/city/${city.id}/neighborhoods/wikiTitle`, {neighborhood, city})
-      // maybe get rid of the next 3 lines and refactor the last .then
       .then(res => {
         neighborhood.wikiTitle = res.data.wikiTitle;
         neighborhood.wikiSnippet = res.data.wikiSnippet;
         neighborhood.wikiImage = res.data.wikiImage;
+        neighborhood.wikiText = res.data.wikiText;
         dispatch(getNeighborhoodSections(city, neighborhood))
       })
-
     })
   }
 }
@@ -112,6 +116,7 @@ export function getNeighborhoodSections(city, neighborhood){
     .then(res => {
       const sections = res.data;
       dispatch(addNeighborhoodSections(sections, neighborhood))
+      dispatch(setStatus('Neighborhoods loaded'))
     })
   }
 }
@@ -216,12 +221,32 @@ export function getSectionContentComparisons(){
             // console.log('weighted scoring for:', neighborhood.neighborhood, results[i].weightedScoring)
             // console.log('left right scoring for:', neighborhood.neighborhood, results[i].overlappingLeftRight)
             // console.log('right left scoring for:', neighborhood.neighborhood, results[i].overlappingRightLeft)
-            newCriteria[criteriumIndex].sectionsToSearch[sectionIndex].neighborhoods[neighborhoodIndex].score = results[i].weightedScoring;
+            newCriteria[criteriumIndex].sectionsToSearch[sectionIndex].neighborhoods[neighborhoodIndex].score = results[i].weightedScoring * section.result.weightedScoring;
             i++;
           })
         })
       })
       dispatch(updateCriteria(newCriteria))
+      dispatch(getOverallComparison());
+    })
+  }
+}
+
+export function getOverallComparison(){
+  return function (dispatch, getState){
+    console.log('got to overall');
+    const neighborhoods = getState().currentCityNeighborhoods;
+    const input = getState().input;
+    
+    axios.post(`/api/comparisons/overall`, {input, neighborhoods})
+    .then(res => {
+      console.log('got some data:', res.data);
+      let newNeighborhoods = neighborhoods.map((neighborhood, idx) => {
+        neighborhood.overallScore = res.data[idx].weightedScoring;
+        return neighborhood;
+      })
+
+      dispatch(updateNeighborhoods(newNeighborhoods));
       dispatch(mapScoresToNeighborhoods());
     })
   }
@@ -237,8 +262,10 @@ export function mapScoresToNeighborhoods(){
     neighborhoods = neighborhoods.map((neighborhood) => {
       const scores = findScores(neighborhood.wikiTitle, criteria);
       const averageScore = findAverage(scores);
+      const finalScore = ((averageScore / 10) + neighborhood.overallScore) / 2
       neighborhood.scores = scores;
       neighborhood.averageScore = averageScore;
+      neighborhood.finalScore = finalScore;
       return neighborhood;
     })
 
@@ -276,7 +303,7 @@ function findAverage(array){
 
 function sortByScore(neighborhoods){
   return neighborhoods.sort((a, b) => {
-    return b.averageScore - a.averageScore
+    return b.overallScore - a.overallScore
   })
 }
 
@@ -324,6 +351,8 @@ const rootReducer = function(state = initialState, action) {
       return Object.assign({}, state, {status: action.status});
     case UPDATE_NEIGHBORHOODS:
       return Object.assign({}, state, {currentCityNeighborhoods: action.neighborhoods});
+    case CLEAR_STATE:
+      return Object.assign({}, initialState);
     default: return state
   }
 };

@@ -18,7 +18,7 @@ export default class SingleCity extends React.Component {
     this.unsubscribe = store.subscribe(() => {
       this.setState(store.getState());
     })
-    store.dispatch(setCity(this.props.match.params.cityId))
+    // store.dispatch(setCity(this.props.match.params.cityId))
     // store.dispatch(getCityNeighborhoods(this.props.match.params.cityId))
   }
 
@@ -39,12 +39,9 @@ export default class SingleCity extends React.Component {
           translateX: 250
         }}
       >
-        <div key="2">
-          <div className="neighborhoods-header">
-            <h1>Welcome to {this.state.currentCity.name}</h1>
-            <InputForm/>
-          </div>
-          <Results />
+        <div key="2" className="neighborhoods-container">
+          <h1>Welcome to {this.state.currentCity.name}</h1>
+          <InputForm/>
         </div>
       </Transition>
     )

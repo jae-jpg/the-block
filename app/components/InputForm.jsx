@@ -26,7 +26,7 @@ export default class InputForm extends React.Component {
 
   handleSubmit(event){
     event.preventDefault();
-    store.dispatch(setStatus('Display city'));
+    store.dispatch(setStatus('Loading results'));
     store.dispatch(setCriteria());
     store.dispatch(rankNeighborhoods());
   }
