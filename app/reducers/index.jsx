@@ -97,22 +97,32 @@ export function getCityNeighborhoods(cityId){
 
 export function getNeighborhoodData(city, neighborhoods){
   return function(dispatch){
+
+    let promises = [];
     neighborhoods.forEach((neighborhood, idx) => {
-      return axios.post(`api/city/${city.id}/neighborhoods/wikiData`, {neighborhood, city})
-      .then(res => {
-        neighborhood.wikiTitle = res.data.wikiTitle;
-        neighborhood.wikiSnippet = res.data.wikiSnippet;
-        neighborhood.wikiImage = res.data.wikiImage;
-        neighborhood.wikiText = res.data.wikiText;
-      })
+      let promise = axios.post(`api/city/${city.id}/neighborhoods/wikiData`, {neighborhood, city})
+      promises.push(promise);
     })
-    dispatch(setStatus('Neighborhoods loaded'))
+
+    Promise.all(promises)
+    .then(res => {
+      let newNeighborhoods = _.cloneDeep(neighborhoods);
+      newNeighborhoods = newNeighborhoods.map((neighborhood, idx) => {
+        neighborhood.wikiTitle = res[idx].data.wikiTitle;
+        neighborhood.wikiSnippet = res[idx].data.wikiSnippet;
+        neighborhood.wikiImage = res[idx].data.wikiImage;
+        neighborhood.wikiText = res[idx].data.wikiText;
+        return neighborhood;
+      })
+
+      dispatch(updateNeighborhoods(newNeighborhoods));
+      dispatch(setStatus('Neighborhoods loaded'));
+    })
   }
 }
 
 export function rankNeighborhoods(){
   return function(dispatch){
-    console.log('ranking neighborhoods...');
     dispatch(getIndividualComparisons('wikiSnippet', 'wikiText'));
   }
 }
@@ -121,6 +131,8 @@ export function getIndividualComparisons(option1, option2){
   return function (dispatch, getState){
     let neighborhoods = _.cloneDeep(getState().currentCityNeighborhoods);
     const criteria = getState().criteria;
+    const scores = option1 === 'wikiSnippet' ? 'snippetScores' : 'textScores';
+    const avgScore = option1 === 'wikiSnippet' ? 'averageSnippetScore' : 'averageTextScore';
 
     let promises = [];
     
@@ -133,22 +145,29 @@ export function getIndividualComparisons(option1, option2){
     .then(res => {
       criteria.forEach((criterium, criteriumIdx) => {
         neighborhoods = neighborhoods.map((neighborhood, neighborhoodIdx) => {
-          if (!neighborhood.scores) neighborhood.scores = [];
-          console.log(criterium.name, neighborhood.name, res[criteriumIdx].data[neighborhoodIdx])
-          neighborhood.scores.push(res[criteriumIdx].data[neighborhoodIdx].weightedScoring);
+          if (!neighborhood[scores]) neighborhood[scores] = [];
+          // console.log(criterium.name, neighborhood.name, res[criteriumIdx].data[neighborhoodIdx])
+          neighborhood[scores].push(res[criteriumIdx].data[neighborhoodIdx].weightedScoring);
           return neighborhood;
         })
       })
 
       if (option2) {
+        neighborhoods = neighborhoods.map(neighborhood => {
+          neighborhood[avgScore] = findAverage(neighborhood[scores])
+          return neighborhood;
+        });
+        dispatch(updateNeighborhoods(neighborhoods));
         dispatch(getIndividualComparisons(option2));
       } else {
         neighborhoods = neighborhoods.map(neighborhood => {
-          neighborhood.averageScore = findAverage(neighborhood.scores);
+          neighborhood[avgScore] = findAverage(neighborhood[scores])
           return neighborhood;
         });
 
-        neighborhoods = sortByScore(neighborhoods);
+        const groupAverage = findAverage(neighborhoods.map(n => (((n.averageSnippetScore) + (n.averageTextScore * 4)) / 5)))
+        console.log('group average', groupAverage)
+        neighborhoods = sortByScore(neighborhoods, groupAverage);
         dispatch(updateNeighborhoods(neighborhoods));
         dispatch(setStatus('Results loaded'));
       }
@@ -157,7 +176,7 @@ export function getIndividualComparisons(option1, option2){
 }
 
 function findAverage(array){
-  if (array.length) {
+  if (array && array.length) {
     return array.reduce((acc, el) => {
       return acc + el;
     }) / array.length;
@@ -166,35 +185,21 @@ function findAverage(array){
   } 
 }
 
-function sortByScore(neighborhoods){
+function sortByScore(neighborhoods, groupAverage){
   return neighborhoods.sort((a, b) => {
-    return b.averageScore - a.averageScore;
+    const aDiff = Math.abs(a.averageSnippetScore - a.averageTextScore);
+    const bDiff = Math.abs(b.averageSnippetScore - b.averageTextScore);
+
+    let aCalc = (((a.averageSnippetScore) + (a.averageTextScore * 4)) / 5);
+    let bCalc = (((b.averageSnippetScore) + (b.averageTextScore * 4)) / 5);
+
+    aCalc = aDiff > 5 && aCalc < groupAverage || aDiff > 6 && aCalc < groupAverage * 1.17 || aDiff > 6.75 && aCalc < groupAverage * 1.22 ? aCalc / aDiff : aCalc;
+    bCalc = bDiff > 5 && bCalc < groupAverage || bDiff > 6 && bCalc < groupAverage * 1.17 || bDiff > 6.75 && bCalc < groupAverage * 1.22 ? bCalc / bDiff : bCalc;
+    console.log(a.name, 'aCalc', aCalc, 'aDiff', aDiff);
+
+    return bCalc - aCalc;
   })
 }
-
-// IF I USE THIS, I NEED TO MODIFY WHAT'S BEING USED IN THE REQUEST BODY API ROUTE
-// export function getOverallComparisons(){
-//   return function (dispatch, getState){
-//     let neighborhoods = _.cloneDeep(getState().currentCityNeighborhoods);
-//     const input = getState().input;
-    
-//     axios.post(`/api/comparisons/overall`, {input, neighborhoods})
-//     .then(res => {
-//       let newNeighborhoods = neighborhoods.map((neighborhood, idx) => {
-//         neighborhood.overallScore = res.data[idx].weightedScoring;
-//         return neighborhood;
-//       })
-
-//       neighborhoods = sortByScore(neighborhoods);
-//       dispatch(updateNeighborhoods(neighborhoods));
-//       dispatch(setStatus('Results loaded'));
-//     })
-//   }
-// }
-
-
-
-
 
 const rootReducer = function(state = initialState, action) {
   switch(action.type) {
@@ -386,4 +391,24 @@ export default rootReducer;
 //     })
 //   })
 //   return scores;
+// }
+
+// IF I USE THIS, I NEED TO MODIFY WHAT'S BEING USED IN THE REQUEST BODY API ROUTE
+// export function getOverallComparisons(){
+//   return function (dispatch, getState){
+//     let neighborhoods = _.cloneDeep(getState().currentCityNeighborhoods);
+//     const input = getState().input;
+    
+//     axios.post(`/api/comparisons/overall`, {input, neighborhoods})
+//     .then(res => {
+//       let newNeighborhoods = neighborhoods.map((neighborhood, idx) => {
+//         neighborhood.overallScore = res.data[idx].weightedScoring;
+//         return neighborhood;
+//       })
+
+//       neighborhoods = sortByScore(neighborhoods);
+//       dispatch(updateNeighborhoods(neighborhoods));
+//       dispatch(setStatus('Results loaded'));
+//     })
+//   }
 // }

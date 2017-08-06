@@ -44,14 +44,13 @@ api.post('/city/:cityId/neighborhoods/wikiData', (req, res) => {
 			article.title.includes('Yorkville, New York') === false
 		})
 		let wikiTitle = article.title.replace(/ /g, '%20').replace('–', '%E2%80%93');;
-		const wikiSnippet = sanitizeHtml(article.snippet, {
+		let wikiSnippet = sanitizeHtml(article.snippet, {
 			allowedTags: [],
 			allowedAttributes: []
-		});
+		}).replace(/(\d+)\; -(\d+).(\d+)/g, '').replace(/-(\d+).(\d+)/g, '').replace(/&quot;/g, '');
 
 		result.wikiTitle = wikiTitle;
 		result.wikiSnippet = wikiSnippet;
-		test = `https://en.wikipedia.org/w/api.php?action=query&format=json&titles=${wikiTitle}&prop=pageimages`;
 
 		return axios.get(`https://en.wikipedia.org/w/api.php?action=query&format=json&titles=${wikiTitle}&prop=pageimages`)
 	})
@@ -77,7 +76,7 @@ api.post('/city/:cityId/neighborhoods/wikiData', (req, res) => {
 		const wikiText = sanitizeHtml(text, {
 			allowedTags: [],
 			allowedAttributes: []
-		}).replace(/\{\{Infobox(.*?)\}\}|\[http(.*?)\]/g, '').replace(/\{\{(.*?)\}\}/g, '').replace(/\n|\|thumb(.*?)px\||\|/g, ' ').replace(/&quot;|\[\[|\]\]|'''|File:|.jpg|.png/g, '').slice(0, 8000);
+		}).replace(/\{\{Infobox NRHP/g, '').replace(/\n|\|thumb(.*?)px\||\|/g, ' ').replace(/\{\{(.*?)\}\}|\[http(.*?)\]|&quot;|\[\[|\]\]|'''|File:|.jpg|.png|.gif/g, '').slice(0, 3500);
 		result.wikiText = wikiText;
 		res.send(result);
 	})

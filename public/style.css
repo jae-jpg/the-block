@@ -162,12 +162,6 @@ ul {
 }
 
 
-img {
-  width: 100%;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
-}
-
 hr {
   border: 2.5px solid lightgray;
   width: 98%;
@@ -175,6 +169,10 @@ hr {
 
 .secondary-results-content {
   padding: 20px;
+}
+
+.icon {
+  max-width: 50px;
 }
 
 
