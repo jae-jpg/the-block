@@ -77,7 +77,7 @@ api.post('/city/:cityId/neighborhoods/wikiData', (req, res) => {
 		const wikiText = sanitizeHtml(text, {
 			allowedTags: [],
 			allowedAttributes: []
-		}).replace(/\n/g, ' ').slice(0, 8000);
+		}).replace(/\{\{Infobox(.*?)\}\}|\[http(.*?)\]/g, '').replace(/\{\{(.*?)\}\}/g, '').replace(/\n|\|thumb(.*?)px\||\|/g, ' ').replace(/&quot;|\[\[|\]\]|'''|File:|.jpg|.png/g, '').slice(0, 8000);
 		result.wikiText = wikiText;
 		res.send(result);
 	})
