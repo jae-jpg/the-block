@@ -1,17 +1,45 @@
 body {
-  background-color: #DAE2E8;
-  font-family: 'Roboto', sans-serif;
+  background-color: #F4EEE8;
+  color: #535955;
+}
+
+.main {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  height: 95%;
+}
+
+.footer {
+  height: 5%;
 }
 
 h1 {
   font-size: 52px;
-  color: #1E555C;
+  color: #234C33;
+}
+
+h2 {
+  color: #535955;
+  font-family: 'Open Sans';
+}
+
+.loading1 {
+  margin-bottom: 5px; 
+}
+
+.loading2 {
+  margin-top: 5px;
+  margin-bottom: 20;
 }
 
 .root-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
   justify-content: center;
   align-items: center;
 }
@@ -31,7 +59,7 @@ h1 {
 .loading-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
   justify-content: center;
   align-items: center;
 }
@@ -60,25 +88,10 @@ ul {
 .neighborhoods-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
   justify-content: center;
   align-items: center;
 }
-
-/* .neighborhoods-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-} */
-
-/* .neighborhoods-item {
-  width: 24.5%;
-  height: 20vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid grey;
-} */
 
 .criteria-container {
   display: flex;
@@ -88,21 +101,62 @@ ul {
   width: 100%;
 }
 
- .criteria-form {
+.criteria-form {
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center; 
   width: 100%;
-} 
+}
+
+.criteria-question {
+  margin-bottom: 5px;
+}
+
+.criteria-prompt {
+  margin-top: 0px;
+  font-family: 'Open Sans';
+  margin-bottom: 12px;
+}
 
 .criteria-input {
-  width: 60%;
-  height: 60px;
-  font-size: 44px;
-  border-radius: 10px;
-  margin-bottom: 20px;
+  width: 500px;
+  height: 45px;
+  font-size: 22px;
+  color: #535955;
+  margin: 10px 0px;
   text-align: center;
+  outline: none;
+  border: #DEDEDF solid 1px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.input-submit-button {
+  border: 0px;
+  height: 37px;
+  margin: 0px 0px;
+  padding: 0px 0px;
+  height: 45px;
+  width: 90px;
+  background-color: #E8A155;
+  color: white;
+  font-size: 16px;
+  font-family: 'Open Sans';
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.input-submit-button:hover {
+  background-color: #E89843; /* Green */
+  color: white;
+}
+
+.root-form {
+  margin: 0px;
+  padding: 0px;
+  display: flex;
+  height: 45px;
+  align-items: center;
 }
 
 .root-submit-button {
@@ -111,24 +165,35 @@ ul {
   width: 37px;
   margin: 0px 0px;
   padding: 0px 0px;
-  background-color: burlywood;
+  height: 36px;
+  background-color: #E8A155;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
 }
 
-.root-form {
-  margin: 0px;
-  padding: 0px;
-  display: flex;
+.white {
+  color: white
 }
 
+.dropdown {
+  width: 300px;
+  border-top-right-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+  display: flex;
+  flex-direction: column;
+}
 
 .results-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
   justify-content: center;
   align-items: center;
+}
+
+.secondary-results-item:hover {
+  /* background-image: #DDDAD5 !important; */
+  background-image: linear-gradient(#F7F7F7, #F7F7F7);
 }
 
 .top-result-container {
@@ -157,24 +222,70 @@ ul {
   width: 25%;
   text-align: center;
   background-color: white;
+  background-image: linear-gradient(white, #EFECEA);
   border-radius: 5px;
   box-shadow: 0px 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
+h3 {
+  margin-bottom: 0px;
+  margin-top: 0px;
+}
 
-hr {
-  border: 2.5px solid lightgray;
-  width: 98%;
+.number {
+  margin-bottom: 10px;
+  color: #1E555C;
+}
+
+.neighborhood {
+  color: #E8A155;
 }
 
 .secondary-results-content {
   padding: 20px;
 }
 
+.description {
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+}
+
 .icon {
   max-width: 50px;
 }
 
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 8px;
+}
+
+.footer-side {
+  display: flex;
+  align-items: center;
+}
+
+.the-block {
+  margin-left: 5px;
+}
+
+.start-over {
+  margin-right: 5px;
+}
+
+.home {
+  max-width: 30px;
+}
+
+.fa-spin-hover {
+  max-width: 30px;
+}
+
+.fa-spin-hover:hover {
+  animation: fa-spin 1s .5 linear;
+}
+@-webkit-keyframes fa-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}100%{-webkit-transform:rotate(359deg);transform:rotate(359deg)}}
+@keyframes fa-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}100%{-webkit-transform:rotate(359deg);transform:rotate(359deg)}}
 
 
 /* CSS TRANSITIONS */

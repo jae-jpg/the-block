@@ -18,8 +18,6 @@ export default class SingleCity extends React.Component {
     this.unsubscribe = store.subscribe(() => {
       this.setState(store.getState());
     })
-    // store.dispatch(setCity(this.props.match.params.cityId))
-    // store.dispatch(getCityNeighborhoods(this.props.match.params.cityId))
   }
 
   componentWillUnmount(){
@@ -40,10 +38,10 @@ export default class SingleCity extends React.Component {
         }}
       >
         <div key="2" className="neighborhoods-container">
-          <h1>Welcome to {this.state.currentCity.name}</h1>
           <InputForm/>
         </div>
       </Transition>
     )
   }
 }
+

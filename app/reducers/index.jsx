@@ -9,7 +9,7 @@ const initialState = {
     {name: 'Denver', id: 'den'},
     {name: 'Houston', id: 'hou'},
     {name: 'Los Angeles', id: 'la'},
-    {name: 'New York City', id: 'nyc'},
+    {name: 'New York', id: 'nyc'},
     {name: 'Philadelphia', id: 'philly'},
     {name: 'San Francisco', id: 'sf'},
     {name: 'Seattle', id: 'sea'},
@@ -123,6 +123,7 @@ export function getNeighborhoodData(city, neighborhoods){
 
 export function rankNeighborhoods(){
   return function(dispatch){
+    dispatch(setStatus('Getting comparisons 1'))
     dispatch(getIndividualComparisons('wikiSnippet', 'wikiText'));
   }
 }
@@ -143,6 +144,7 @@ export function getIndividualComparisons(option1, option2){
     
     Promise.all(promises)
     .then(res => {
+      dispatch(setStatus('Getting comparisons 2'))
       criteria.forEach((criterium, criteriumIdx) => {
         neighborhoods = neighborhoods.map((neighborhood, neighborhoodIdx) => {
           if (!neighborhood[scores]) neighborhood[scores] = [];
@@ -192,9 +194,10 @@ function sortByScore(neighborhoods, groupAverage){
 
     let aCalc = (((a.averageSnippetScore) + (a.averageTextScore * 4)) / 5);
     let bCalc = (((b.averageSnippetScore) + (b.averageTextScore * 4)) / 5);
+    console.log(a.name, 'aCalc prior', aCalc)
 
-    aCalc = aDiff > 5 && aCalc < groupAverage || aDiff > 6 && aCalc < groupAverage * 1.17 || aDiff > 6.75 && aCalc < groupAverage * 1.22 ? aCalc / aDiff : aCalc;
-    bCalc = bDiff > 5 && bCalc < groupAverage || bDiff > 6 && bCalc < groupAverage * 1.17 || bDiff > 6.75 && bCalc < groupAverage * 1.22 ? bCalc / bDiff : bCalc;
+    aCalc = aDiff > 5 && aCalc < groupAverage || aDiff > 6 && aCalc < groupAverage * 1.178 || aDiff > 6.75 && aCalc < groupAverage * 1.22? aCalc / aDiff : aCalc;
+    bCalc = bDiff > 5 && bCalc < groupAverage || bDiff > 6 && bCalc < groupAverage * 1.178 || bDiff > 6.75 && bCalc < groupAverage * 1.22? bCalc / bDiff : bCalc;
     console.log(a.name, 'aCalc', aCalc, 'aDiff', aDiff);
 
     return bCalc - aCalc;

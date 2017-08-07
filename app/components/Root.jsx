@@ -50,7 +50,7 @@ export default class Root extends Component {
           <h1 className="root-item">Where would you like to live?</h1>
           <form className="root-form" onSubmit={this.handleSubmit}>
             <Dropdown cityList={this.state.cityList}/>
-            <button type="submit" className="root-submit-button"></button>
+            <button type="submit" className="root-submit-button"><i className="fa fa-arrow-right white"></i></button>
           </form>
         </div>
       </Transition>

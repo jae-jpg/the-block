@@ -47,25 +47,15 @@ api.post('/city/:cityId/neighborhoods/wikiData', (req, res) => {
 		let wikiSnippet = sanitizeHtml(article.snippet, {
 			allowedTags: [],
 			allowedAttributes: []
-		}).replace(/(\d+)\; -(\d+).(\d+)/g, '').replace(/-(\d+).(\d+)/g, '').replace(/&quot;/g, '');
+		}).replace(/(\d+)\; -(\d+).(\d+)/g, '').replace(/-(\d+).(\d+)/g, '').replace(/&quot;/g, '').replace(/°N 73\.987°W\ufeff \/ 40\. /g, '');
+
+		let characters = '0123456789./%-';
+		while (characters.includes(wikiSnippet[0])) {
+			wikiSnippet = wikiSnippet.slice(1);
+		}
 
 		result.wikiTitle = wikiTitle;
 		result.wikiSnippet = wikiSnippet;
-
-		return axios.get(`https://en.wikipedia.org/w/api.php?action=query&format=json&titles=${wikiTitle}&prop=pageimages`)
-	})
-	.then(apiRes => {
-		const pages = apiRes.data.query.pages;
-		const keys = Object.keys(pages);
-		const pageImage = pages[keys[0]].pageimage;
-		if (pageImage) {
-			const hashedImage = md5(pageImage)
-
-			const wikiImage = `https://upload.wikimedia.org/wikipedia/commons/${hashedImage[0]}/${hashedImage[0]}${hashedImage[1]}/${pageImage}`
-			result.wikiImage = wikiImage;
-		} else {
-			result.wikiImage = 'http://img-aws.ehowcdn.com/560x560p/photos.demandstudios.com/getty/article/152/77/87578869.jpg';
-		}
 		
 		return axios.get(`https://en.wikipedia.org/w/api.php?action=query&format=json&titles=${result.wikiTitle}&prop=revisions&rvprop=content`)
 	})
@@ -109,3 +99,18 @@ api.post('/comparisons/overall', (req, res) => {
 });
 
 module.exports = api
+
+	// 	return axios.get(`https://en.wikipedia.org/w/api.php?action=query&format=json&titles=${wikiTitle}&prop=pageimages`)
+	// })
+	// .then(apiRes => {
+	// 	const pages = apiRes.data.query.pages;
+	// 	const keys = Object.keys(pages);
+	// 	const pageImage = pages[keys[0]].pageimage;
+	// 	if (pageImage) {
+	// 		const hashedImage = md5(pageImage)
+
+	// 		const wikiImage = `https://upload.wikimedia.org/wikipedia/commons/${hashedImage[0]}/${hashedImage[0]}${hashedImage[1]}/${pageImage}`
+	// 		result.wikiImage = wikiImage;
+	// 	} else {
+	// 		result.wikiImage = 'http://img-aws.ehowcdn.com/560x560p/photos.demandstudios.com/getty/article/152/77/87578869.jpg';
+	// 	}

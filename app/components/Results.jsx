@@ -55,10 +55,11 @@ function Results(props){
                 className="secondary-results-item"       
               >
                 <div className="secondary-results-content">
-                  <h3>{neighborhood.name.toUpperCase()}</h3>
-                  <span>{neighborhood.wikiSnippet}...</span>
+                  <h3 className="number">#1</h3>
+                  <h3 className="neighborhood">{neighborhood.name.toUpperCase()}</h3>
+                  <p className="description">{neighborhood.wikiSnippet}...</p>
                   <br/>
-                  <span>EXPLORE</span>
+                  <a href={`https://en.wikipedia.org/wiki/${neighborhood.wikiTitle}`}><p className="explore">EXPLORE</p></a>
                 </div>
               </div>
             ))
@@ -66,16 +67,17 @@ function Results(props){
         </div>
         <div className="top-result-container">
           {
-            props.neighborhoods.map(neighborhood => (
+            props.neighborhoods.map((neighborhood, idx) => (
               <div
                 key={neighborhood.id}
                 className="secondary-results-item"       
               >
                 <div className="secondary-results-content">
-                  <h3>{neighborhood.name.toUpperCase()}</h3>
-                  <span>{neighborhood.wikiSnippet}...</span>
+                  <h3 className="number">#{idx + 2}</h3>
+                  <h3 className="neighborhood">{neighborhood.name.toUpperCase()}</h3>
+                  <p className="description">{neighborhood.wikiSnippet}...</p>
                   <br/>
-                  <span>EXPLORE</span>
+                  <span className="explore"><a href={`https://en.wikipedia.org/wiki/${neighborhood.wikiTitle}`}>EXPLORE</a></span>
                 </div>
               </div>
             ))

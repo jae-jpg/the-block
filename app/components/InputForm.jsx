@@ -26,7 +26,7 @@ export default class InputForm extends React.Component {
 
   handleSubmit(event){
     event.preventDefault();
-    store.dispatch(setStatus('Loading results'));
+    // store.dispatch(setStatus('Loading results'));
     store.dispatch(setCriteria());
     store.dispatch(rankNeighborhoods());
   }
@@ -34,10 +34,15 @@ export default class InputForm extends React.Component {
   render(){
     return (
       <div className="criteria-container">
-        <h3 className="criteria-item">What are you looking for in a neighborhood?</h3>
+        <h1 className="criteria-item criteria-question">What are you looking for in a neighborhood?</h1>
+        <h3 className="criteria-prompt">You can write anything here! The more ideas the better.</h3>
         <form className="criteria-item criteria-form" onSubmit={this.handleSubmit}>
-          <input autoFocus className="criteria-input" onChange={this.handleChange}></input>
-          <button type="submit">Submit</button>
+          <input
+            autoFocus
+            className="criteria-input"
+            onChange={this.handleChange}
+          ></input>
+          <button type="submit" className="input-submit-button">Submit</button>
         </form>
       </div>
     )

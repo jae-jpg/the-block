@@ -31,7 +31,11 @@ export default class SingleCityContainer extends React.Component {
         return <Loadscreen />
       case 'Neighborhoods loaded':
         return <SingleCity />
-      case 'Loading results':
+      case 'Getting comparisons 1':
+        return <Loadscreen/>
+      case 'Getting comparisons 2':
+        return <Loadscreen/>
+      case 'Getting comparisons 3':
         return <Loadscreen/>
       case 'Results loaded':
         return <Results />
@@ -42,9 +46,7 @@ export default class SingleCityContainer extends React.Component {
 
   render(){
     return (
-      <div>
-        {this.renderComponent()}
-      </div>
+        this.renderComponent()
     )
   }
 }
