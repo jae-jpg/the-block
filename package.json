@@ -7,7 +7,6 @@
     "test": "mocha **/*.test.js *.test.js",
     "build": "webpack",
     "build-watch": "webpack -w"
-    // "start": "webpack -w & nodemon server/start.js"
   },
   "keywords": [
     "react",
