@@ -2,11 +2,14 @@
 
 const express = require('express')
 const bodyParser = require('body-parser')
+const db = require('./db')
 const {resolve} = require('path')
 
 const pkg = require('../package.json')
 
 const app = express()
+
+db.sync().then(() => console.log('Database is synced'));
 
 if (process.env.NODE_ENV !== 'production') {
   // Logging middleware (non-production only)
