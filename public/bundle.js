@@ -27540,18 +27540,12 @@
 	  neighborhoodSections: [],
 	  criteria: [],
 	  status: 'Loading neighborhoods'
-	  // ADD ADDITIONAL FIELDS HERE
-	
 	
 	  // action types
 	};var SET_CITY = 'SET_CITY';
 	var SET_CITY_NEIGHBORHOODS = 'SET_CITY_NEIGHBORHOODS';
-	// const UPDATE_NEIGHBORHOOD = 'UPDATE_NEIGHBORHOOD';
 	var NEW_INPUT = 'NEW_INPUT';
-	// const ADD_NEIGHBORHOOD_SECTIONS = 'ADD_NEIGHBORHOOD_SECTIONS';
 	var SET_CRITERIA = 'SET_CRITERIA';
-	// const UPDATE_CRITERIUM = 'UPDATE_CRITERIUM'
-	// const UPDATE_CRITERIA = 'UPDATE_CRITERIA'
 	var UPDATE_SCORE_AVERAGES = 'UPDATE_SCORE_AVERAGES';
 	var UPDATE_NEIGHBORHOODS = 'UPDATE_NEIGHBORHOODS';
 	var SET_STATUS = 'SET_STATUS';
@@ -27566,29 +27560,13 @@
 	  return { type: SET_CITY_NEIGHBORHOODS, neighborhoods: neighborhoods };
 	}
 	
-	// export function updateNeighborhood(neighborhood, idx){
-	//   return {type: UPDATE_NEIGHBORHOOD, neighborhood, idx}
-	// }
-	
 	function newInput(input) {
 	  return { type: NEW_INPUT, input: input };
 	}
 	
-	// export function addNeighborhoodSections(sections, neighborhood){
-	//   return {type: ADD_NEIGHBORHOOD_SECTIONS, sections, neighborhood}
-	// }
-	
 	function setCriteria() {
 	  return { type: SET_CRITERIA };
 	}
-	
-	// export function updateCriterium(criterium, sectionsToSearch){
-	//   return {type: UPDATE_CRITERIUM, criterium, sectionsToSearch}
-	// }
-	
-	// export function updateCriteria(criteria){
-	//   return {type: UPDATE_CRITERIA, criteria}
-	// }
 	
 	function updateNeighborhoods(neighborhoods) {
 	  return { type: UPDATE_NEIGHBORHOODS, neighborhoods: neighborhoods };
@@ -27686,7 +27664,7 @@
 	        var groupAverage = findAverage(neighborhoods.map(function (n) {
 	          return (n.averageSnippetScore + n.averageTextScore * 4) / 5;
 	        }));
-	        console.log('group average', groupAverage);
+	        // console.log('group average', groupAverage)
 	        neighborhoods = sortByScore(neighborhoods, groupAverage);
 	        dispatch(updateNeighborhoods(neighborhoods));
 	        dispatch(setStatus('Results loaded'));
@@ -27712,11 +27690,11 @@
 	
 	    var aCalc = (a.averageSnippetScore + a.averageTextScore * 4) / 5;
 	    var bCalc = (b.averageSnippetScore + b.averageTextScore * 4) / 5;
-	    console.log(a.name, 'aCalc prior', aCalc);
+	    // console.log(a.name, 'aCalc prior', aCalc)
 	
 	    aCalc = aDiff > 5 && aCalc < groupAverage || aDiff > 6 && aCalc < groupAverage * 1.178 || aDiff > 6.75 && aCalc < groupAverage * 1.22 ? aCalc / aDiff : aCalc;
 	    bCalc = bDiff > 5 && bCalc < groupAverage || bDiff > 6 && bCalc < groupAverage * 1.178 || bDiff > 6.75 && bCalc < groupAverage * 1.22 ? bCalc / bDiff : bCalc;
-	    console.log(a.name, 'aCalc', aCalc, 'aDiff', aDiff);
+	    // console.log(a.name, 'aCalc', aCalc, 'aDiff', aDiff);
 	
 	    return bCalc - aCalc;
 	  });
@@ -27733,10 +27711,6 @@
 	        }) });
 	    case SET_CITY_NEIGHBORHOODS:
 	      return Object.assign({}, state, { currentCityNeighborhoods: action.neighborhoods });
-	    // case UPDATE_NEIGHBORHOOD:
-	    //   let newNeighborhoods = state.currentCityNeighborhoods;
-	    //   newNeighborhoods[action.idx] = action.neighborhood
-	    //   return Object.assign({}, state, {currentCityNeighborhoods: newNeighborhoods});
 	    case NEW_INPUT:
 	      return Object.assign({}, state, { input: action.input });
 	    case SET_CRITERIA:
@@ -27745,29 +27719,6 @@
 	        return { name: criterium, sectionsToSearch: [] };
 	      });
 	      return Object.assign({}, state, { criteria: newCriteria });
-	    // case UPDATE_CRITERIUM:
-	    //   let updatedCriteria = state.criteria.map(criterium => {
-	    //     if (criterium.name === action.criterium.name) criterium.sectionsToSearch = action.sectionsToSearch;
-	    //     return criterium;
-	    //   });
-	    //   return Object.assign({}, state, {criteria: updatedCriteria});
-	    // case UPDATE_CRITERIA:
-	    //   return Object.assign({}, state, {criteria: action.criteria});
-	    // case ADD_NEIGHBORHOOD_SECTIONS:
-	    //   // pull the sections and neighborhood from the action creator
-	    //   let {sections, neighborhood} = action;
-	    //   let newNeighborhoodSections = state.neighborhoodSections;
-	
-	    //   // map over the sections to check whether that section title already exists in the neighborhoodSections array
-	    //   sections.forEach(section => {
-	    //     const idx = newNeighborhoodSections.findIndex(existingSection => existingSection.title === section.title)
-	    //     if (idx === -1) {
-	    //       newNeighborhoodSections.push({title: section.title, neighborhoods: [{neighborhood: neighborhood.wikiTitle, idx: section.idx}]})
-	    //     } else {
-	    //       newNeighborhoodSections[idx].neighborhoods.push({neighborhood: neighborhood.wikiTitle, idx: section.idx})
-	    //     }
-	    //   })
-	    //   return Object.assign({}, state, {neighborhoodSections: newNeighborhoodSections});
 	    case SET_STATUS:
 	      return Object.assign({}, state, { status: action.status });
 	    case UPDATE_NEIGHBORHOODS:
