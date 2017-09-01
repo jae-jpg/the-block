@@ -27509,7 +27509,6 @@
 	  value: true
 	});
 	exports.setCities = setCities;
-	exports.setCityInput = setCityInput;
 	exports.setCity = setCity;
 	exports.setCityNeighborhoods = setCityNeighborhoods;
 	exports.newInput = newInput;
@@ -27536,7 +27535,6 @@
 	
 	var initialState = {
 	  cities: [],
-	  cityInput: '',
 	  city: {},
 	  currentCityNeighborhoods: [],
 	  input: '',
@@ -27545,7 +27543,6 @@
 	
 	  // action types
 	};var SET_CITIES = 'SET_CITIES';
-	var SET_CITY_INPUT = 'SET_CITY_INPUT';
 	var SET_CITY = 'SET_CITY';
 	var SET_CITY_NEIGHBORHOODS = 'SET_CITY_NEIGHBORHOODS';
 	var NEW_INPUT = 'NEW_INPUT';
@@ -27558,10 +27555,6 @@
 	// action creators
 	function setCities(cities) {
 	  return { type: SET_CITIES, cities: cities };
-	}
-	
-	function setCityInput(input) {
-	  return { type: SET_CITY_INPUT, input: input };
 	}
 	
 	function setCity(cityId) {
@@ -27635,7 +27628,7 @@
 	      criteria.forEach(function (criterium, criteriumIdx) {
 	        neighborhoods = neighborhoods.map(function (neighborhood, neighborhoodIdx) {
 	          if (!neighborhood[scores]) neighborhood[scores] = [];
-	          console.log(criterium, neighborhood.name, res[criteriumIdx].data[neighborhoodIdx]);
+	          // console.log(criterium, neighborhood.name, res[criteriumIdx].data[neighborhoodIdx])
 	          neighborhood[scores].push(res[criteriumIdx].data[neighborhoodIdx].weightedScoring);
 	          return neighborhood;
 	        });
@@ -27700,8 +27693,6 @@
 	  switch (action.type) {
 	    case SET_CITIES:
 	      return Object.assign({}, state, { cities: action.cities });
-	    case SET_CITY_INPUT:
-	      return Object.assign({}, state, { cityInput: action.input });
 	    case SET_CITY:
 	      return Object.assign({}, state, { city: state.cities.find(function (city) {
 	          return city.id === action.cityId;
@@ -47277,14 +47268,6 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _axios = __webpack_require__(255);
-	
-	var _axios2 = _interopRequireDefault(_axios);
-	
-	var _jsonp = __webpack_require__(290);
-	
-	var _jsonp2 = _interopRequireDefault(_jsonp);
-	
 	var _store = __webpack_require__(253);
 	
 	var _store2 = _interopRequireDefault(_store);
@@ -47292,10 +47275,6 @@
 	var _reactRedux = __webpack_require__(185);
 	
 	var _reactRouterDom = __webpack_require__(217);
-	
-	var _InputForm = __webpack_require__(294);
-	
-	var _InputForm2 = _interopRequireDefault(_InputForm);
 	
 	var _Dropdown = __webpack_require__(295);
 	
@@ -47328,6 +47307,11 @@
 	  }
 	
 	  _createClass(Root, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.props.getCities();
+	    }
+	  }, {
 	    key: 'handleSubmit',
 	    value: function handleSubmit(event) {
 	      event.preventDefault();
@@ -47385,112 +47369,18 @@
 	  };
 	}
 	
-	exports.default = (0, _reactRedux.connect)(mapState)(Root);
-
-/***/ }),
-/* 290 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	/**
-	 * Module dependencies
-	 */
-	
-	var debug = __webpack_require__(291)('jsonp');
-	
-	/**
-	 * Module exports.
-	 */
-	
-	module.exports = jsonp;
-	
-	/**
-	 * Callback index.
-	 */
-	
-	var count = 0;
-	
-	/**
-	 * Noop function.
-	 */
-	
-	function noop(){}
-	
-	/**
-	 * JSONP handler
-	 *
-	 * Options:
-	 *  - param {String} qs parameter (`callback`)
-	 *  - prefix {String} qs parameter (`__jp`)
-	 *  - name {String} qs parameter (`prefix` + incr)
-	 *  - timeout {Number} how long after a timeout error is emitted (`60000`)
-	 *
-	 * @param {String} url
-	 * @param {Object|Function} optional options / callback
-	 * @param {Function} optional callback
-	 */
-	
-	function jsonp(url, opts, fn){
-	  if ('function' == typeof opts) {
-	    fn = opts;
-	    opts = {};
-	  }
-	  if (!opts) opts = {};
-	
-	  var prefix = opts.prefix || '__jp';
-	
-	  // use the callback name that was passed if one was provided.
-	  // otherwise generate a unique name by incrementing our counter.
-	  var id = opts.name || (prefix + (count++));
-	
-	  var param = opts.param || 'callback';
-	  var timeout = null != opts.timeout ? opts.timeout : 60000;
-	  var enc = encodeURIComponent;
-	  var target = document.getElementsByTagName('script')[0] || document.head;
-	  var script;
-	  var timer;
-	
-	
-	  if (timeout) {
-	    timer = setTimeout(function(){
-	      cleanup();
-	      if (fn) fn(new Error('Timeout'));
-	    }, timeout);
-	  }
-	
-	  function cleanup(){
-	    if (script.parentNode) script.parentNode.removeChild(script);
-	    window[id] = noop;
-	    if (timer) clearTimeout(timer);
-	  }
-	
-	  function cancel(){
-	    if (window[id]) {
-	      cleanup();
+	function mapDispatch(dispatch) {
+	  return {
+	    getCities: function getCities() {
+	      dispatch((0, _store.getCities)());
 	    }
-	  }
-	
-	  window[id] = function(data){
-	    debug('jsonp got', data);
-	    cleanup();
-	    if (fn) fn(null, data);
 	  };
-	
-	  // add qs component
-	  url += (~url.indexOf('?') ? '&' : '?') + param + '=' + enc(id);
-	  url = url.replace('?&', '?');
-	
-	  debug('jsonp req "%s"', url);
-	
-	  // create script
-	  script = document.createElement('script');
-	  script.src = url;
-	  target.parentNode.insertBefore(script, target);
-	
-	  return cancel;
 	}
-
+	
+	exports.default = (0, _reactRedux.connect)(mapState, mapDispatch)(Root);
 
 /***/ }),
+/* 290 */,
 /* 291 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -94004,8 +93894,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	exports.default = Footer;
 	
 	var _react = __webpack_require__(1);
 	
@@ -94019,76 +93908,40 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var Footer = function (_React$Component) {
-	  _inherits(Footer, _React$Component);
-	
-	  function Footer(props) {
-	    _classCallCheck(this, Footer);
-	
-	    return _possibleConstructorReturn(this, (Footer.__proto__ || Object.getPrototypeOf(Footer)).call(this, props));
-	  }
-	
-	  _createClass(Footer, [{
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      this.props.getCities();
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'footer-container' },
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'footer-side' },
-	          _react2.default.createElement(
-	            _reactRouterDom.Link,
-	            { to: '/' },
-	            _react2.default.createElement('img', { className: 'home', src: '/images/home.svg' })
-	          ),
-	          _react2.default.createElement(
-	            'h3',
-	            { className: 'the-block' },
-	            'The Block'
-	          )
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'footer-side' },
-	          _react2.default.createElement(
-	            'h3',
-	            { className: 'start-over' },
-	            'Start Over'
-	          ),
-	          _react2.default.createElement(
-	            _reactRouterDom.Link,
-	            { to: '/' },
-	            _react2.default.createElement('img', { className: 'fa-spin-hover', src: '/images/arrows.svg' })
-	          )
-	        )
-	      );
-	    }
-	  }]);
-	
-	  return Footer;
-	}(_react2.default.Component);
-	
-	function mapDispatch(dispatch) {
-	  return {
-	    getCities: function getCities() {
-	      dispatch((0, _store.getCities)());
-	    }
-	  };
+	function Footer() {
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'footer-container' },
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'footer-side' },
+	      _react2.default.createElement(
+	        _reactRouterDom.Link,
+	        { to: '/' },
+	        _react2.default.createElement('img', { className: 'home', src: '/images/home.svg' })
+	      ),
+	      _react2.default.createElement(
+	        'h3',
+	        { className: 'the-block' },
+	        'The Block'
+	      )
+	    ),
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'footer-side' },
+	      _react2.default.createElement(
+	        'h3',
+	        { className: 'start-over' },
+	        'Start Over'
+	      ),
+	      _react2.default.createElement(
+	        _reactRouterDom.Link,
+	        { to: '/' },
+	        _react2.default.createElement('img', { className: 'fa-spin-hover', src: '/images/arrows.svg' })
+	      )
+	    )
+	  );
 	}
-	
-	exports.default = (0, _reactRedux.connect)(null, mapDispatch)(Footer);
 
 /***/ })
 /******/ ]);

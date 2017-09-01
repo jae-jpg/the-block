@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-import jsonp from 'jsonp';
-import store, {setCity, getCityNeighborhoods, clearState, getCities} from '../store'
+import store, {getCities} from '../store'
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
-import InputForm from './InputForm';
 import Dropdown from './Dropdown';
 import Transition from 'react-motion-ui-pack';
 import { spring } from 'react-motion';
@@ -13,6 +10,10 @@ class Root extends Component {
   constructor(props){
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  componentDidMount(){
+    this.props.getCities();
   }
 
   handleSubmit(event){
@@ -54,4 +55,10 @@ function mapState(state){
   }
 }
 
-export default connect(mapState)(Root);
+function mapDispatch(dispatch){
+  return {
+    getCities: function(){dispatch(getCities())}
+  }
+}
+
+export default connect(mapState, mapDispatch)(Root);
