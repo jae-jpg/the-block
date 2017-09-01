@@ -4,7 +4,6 @@ import {render} from 'react-dom'
 import { Provider } from 'react-redux'
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 
-
 import store from './store'
 import Root from './components/Root'
 import SingleCity from './components/SingleCity'

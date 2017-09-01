@@ -15,14 +15,9 @@ class Root extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  componentDidMount(){
-    store.dispatch(getCities());
-  }
-
   handleSubmit(event){
     event.preventDefault();
     this.props.history.push(`/city/${this.props.city.id}`);
-    store.dispatch(getCityNeighborhoods(this.props.city.id));
   }
 
   render() {

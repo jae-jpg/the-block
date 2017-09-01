@@ -4,16 +4,17 @@ import _ from 'lodash';
 
 const initialState = {
   cities: [],
+  cityInput: '',
   city: {},
   currentCityNeighborhoods: [],
   input: '',
-  neighborhoodSections: [],
   criteria: [],
   status: '',
 }
 
 // action types
 const SET_CITIES = 'SET_CITIES';
+const SET_CITY_INPUT = 'SET_CITY_INPUT';
 const SET_CITY = 'SET_CITY';
 const SET_CITY_NEIGHBORHOODS = 'SET_CITY_NEIGHBORHOODS';
 const NEW_INPUT = 'NEW_INPUT';
@@ -26,6 +27,10 @@ const CLEAR_STATE = 'CLEAR_STATE';
 // action creators
 export function setCities(cities){
   return {type: SET_CITIES, cities}
+}
+
+export function setCityInput(input){
+  return {type: SET_CITY_INPUT, input}
 }
 
 export function setCity(cityId){
@@ -102,7 +107,7 @@ export function getIndividualComparisons(option1, option2){
       criteria.forEach((criterium, criteriumIdx) => {
         neighborhoods = neighborhoods.map((neighborhood, neighborhoodIdx) => {
           if (!neighborhood[scores]) neighborhood[scores] = [];
-          // console.log(criterium.name, neighborhood.name, res[criteriumIdx].data[neighborhoodIdx])
+          console.log(criterium, neighborhood.name, res[criteriumIdx].data[neighborhoodIdx])
           neighborhood[scores].push(res[criteriumIdx].data[neighborhoodIdx].weightedScoring);
           return neighborhood;
         })
@@ -162,6 +167,8 @@ const rootReducer = function(state = initialState, action) {
   switch(action.type) {
     case SET_CITIES:
       return Object.assign({}, state, {cities: action.cities});
+    case SET_CITY_INPUT:
+      return Object.assign({}, state, {cityInput: action.input});
     case SET_CITY:
       return Object.assign({}, state, {city: state.cities.find(city => city.id === action.cityId)});
     case SET_CITY_NEIGHBORHOODS:
@@ -170,7 +177,6 @@ const rootReducer = function(state = initialState, action) {
       return Object.assign({}, state, {input: action.input});
     case SET_CRITERIA:
       let newCriteria = state.input.split(', ');
-      console.log('new criteria', newCriteria)
       return Object.assign({}, state, {criteria: newCriteria});
     case SET_STATUS:
       return Object.assign({}, state, {status: action.status});

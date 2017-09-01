@@ -5,26 +5,23 @@ import SingleCity from './SingleCity'
 import Results from './Results'
 import store, {setCity, getCityNeighborhoods, clearState} from '../store'
 
-export default class SingleCityContainer extends React.Component {
+class SingleCityContainer extends React.Component {
   constructor(props){
     super(props);
-    this.state = store.getState();
     this.renderComponent = this.renderComponent.bind(this)
   }
 
   componentDidMount(){
-    this.unsubscribe = store.subscribe(() => {
-      this.setState(store.getState());
-    })
+    const id = this.props.match.params.cityId;
+    this.props.getCityNeighborhoods(id);
   }
 
   componentWillUnmount(){
-    this.unsubscribe();
     store.dispatch(clearState());
   }
   
   renderComponent(){
-    switch (this.state.status) {
+    switch (this.props.status) {
       case 'Loading neighborhoods':
         return <Loadscreen />
       case 'Neighborhoods loaded':
@@ -48,3 +45,19 @@ export default class SingleCityContainer extends React.Component {
     )
   }
 }
+
+function mapState(state){
+  return {
+    city: state.city,
+    status: state.status
+  }
+}
+
+function mapDispatch(dispatch){
+  return {
+    setCity: function(id){dispatch(setCity(id))}, // will need to use this for page refreshes (as opposed to submits from previous page)
+    getCityNeighborhoods: function(id){dispatch(getCityNeighborhoods(id))}
+  }
+}
+
+export default connect(mapState, mapDispatch)(SingleCityContainer)
