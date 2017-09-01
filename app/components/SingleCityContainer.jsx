@@ -16,8 +16,6 @@ export default class SingleCityContainer extends React.Component {
     this.unsubscribe = store.subscribe(() => {
       this.setState(store.getState());
     })
-    store.dispatch(setCity(this.props.match.params.cityId))
-    store.dispatch(getCityNeighborhoods(this.props.match.params.cityId))
   }
 
   componentWillUnmount(){

@@ -3,27 +3,17 @@ import axios from 'axios';
 import _ from 'lodash';
 
 const initialState = {
-  cityList: [
-    {name: 'Boston', id: 'bos'},    
-    {name: 'Chicago', id: 'chi'},
-    {name: 'Denver', id: 'den'},
-    {name: 'Houston', id: 'hou'},
-    {name: 'Los Angeles', id: 'la'},
-    {name: 'New York', id: 'nyc'},
-    {name: 'Philadelphia', id: 'philly'},
-    {name: 'San Francisco', id: 'sf'},
-    {name: 'Seattle', id: 'sea'},
-    {name: 'Washington, DC', id: 'dc'},
-  ],
-  currentCity: {},
+  cities: [],
+  city: {},
   currentCityNeighborhoods: [],
   input: '',
   neighborhoodSections: [],
   criteria: [],
-  status: 'Loading neighborhoods',
+  status: '',
 }
 
 // action types
+const SET_CITIES = 'SET_CITIES';
 const SET_CITY = 'SET_CITY';
 const SET_CITY_NEIGHBORHOODS = 'SET_CITY_NEIGHBORHOODS';
 const NEW_INPUT = 'NEW_INPUT';
@@ -34,6 +24,10 @@ const SET_STATUS = 'SET_STATUS';
 const CLEAR_STATE = 'CLEAR_STATE';
 
 // action creators
+export function setCities(cities){
+  return {type: SET_CITIES, cities}
+}
+
 export function setCity(cityId){
   return {type: SET_CITY, cityId}
 }
@@ -63,39 +57,20 @@ export function clearState(){
 }
 
 // thunk creators
-export function getCityNeighborhoods(cityId){
-  return function(dispatch, getState){
-    return axios.get(`api/city/${cityId}/neighborhoods`)
+export function getCities(){
+  return function(dispatch){
+    return axios.get('/api/city')
     .then(res => {
-      dispatch(setStatus('Loading neighborhoods'));
-      dispatch(setCityNeighborhoods(res.data));
-      dispatch(getNeighborhoodData(getState().currentCity, getState().currentCityNeighborhoods))
+      dispatch(setCities(res.data))
     })
   }
 }
 
-export function getNeighborhoodData(city, neighborhoods){
-  return function(dispatch){
-
-    let promises = [];
-    neighborhoods.forEach((neighborhood, idx) => {
-      let promise = axios.post(`api/city/${city.id}/neighborhoods/wikiData`, {neighborhood, city})
-      promises.push(promise);
-    })
-
-    Promise.all(promises)
+export function getCityNeighborhoods(cityId){
+  return function(dispatch, getState){
+    return axios.get(`/api/city/${cityId}/neighborhoods`)
     .then(res => {
-      let newNeighborhoods = _.cloneDeep(neighborhoods);
-      newNeighborhoods = newNeighborhoods.map((neighborhood, idx) => {
-        neighborhood.wikiTitle = res[idx].data.wikiTitle;
-        neighborhood.wikiSnippet = res[idx].data.wikiSnippet;
-        neighborhood.wikiImage = res[idx].data.wikiImage;
-        neighborhood.wikiText = res[idx].data.wikiText;
-        return neighborhood;
-      })
-
-      dispatch(updateNeighborhoods(newNeighborhoods));
-      dispatch(setStatus('Neighborhoods loaded'));
+      dispatch(setCityNeighborhoods(res.data));
     })
   }
 }
@@ -185,15 +160,17 @@ function sortByScore(neighborhoods, groupAverage){
 
 const rootReducer = function(state = initialState, action) {
   switch(action.type) {
+    case SET_CITIES:
+      return Object.assign({}, state, {cities: action.cities});
     case SET_CITY:
-      return Object.assign({}, state, {currentCity: state.cityList.find(city => city.id === action.cityId)});
+      return Object.assign({}, state, {city: state.cities.find(city => city.id === action.cityId)});
     case SET_CITY_NEIGHBORHOODS:
       return Object.assign({}, state, {currentCityNeighborhoods: action.neighborhoods});
     case NEW_INPUT:
       return Object.assign({}, state, {input: action.input});
     case SET_CRITERIA:
       let newCriteria = state.input.split(', ');
-      newCriteria = newCriteria.map(criterium => ({name: criterium, sectionsToSearch: []}))
+      console.log('new criteria', newCriteria)
       return Object.assign({}, state, {criteria: newCriteria});
     case SET_STATUS:
       return Object.assign({}, state, {status: action.status});

@@ -1,34 +1,23 @@
 import React from 'react';
-import store, {newInput, setCriteria, rankNeighborhoods, setStatus} from '../store'
+import store, {newInput, setCriteria, rankNeighborhoods} from '../store'
+import { connect } from 'react-redux';
 
-export default class InputForm extends React.Component {
+class InputForm extends React.Component {
   constructor(){
     super();
-    this.state = store.getState();
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  componentDidMount(){
-    this.unsubscribe = store.subscribe(() => {
-      this.setState(store.getState());
-    });
-  }
-
-  componentWillUnmount(){
-    this.unsubscribe();
-  }
-
   handleChange(event){
     const input = event.target.value;
-    store.dispatch(newInput(input));
+    this.props.newInput(input);
   }
 
   handleSubmit(event){
     event.preventDefault();
-    // store.dispatch(setStatus('Loading results'));
-    store.dispatch(setCriteria());
-    store.dispatch(rankNeighborhoods());
+    this.props.setCriteria();
+    this.props.rankNeighborhoods();
   }
 
   render(){
@@ -48,3 +37,19 @@ export default class InputForm extends React.Component {
     )
   }
 }
+
+function mapState(state){
+  return {
+    criteria: state.criteria
+  }
+}
+
+function mapDispatch(dispatch){
+  return {
+    newInput: function(input){dispatch(newInput(input))},
+    setCriteria: function(){dispatch(setCriteria())},
+    rankNeighborhoods: function(){dispatch(rankNeighborhoods())}
+  }
+}
+
+export default connect(mapState, mapDispatch)(InputForm);

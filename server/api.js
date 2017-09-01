@@ -1,78 +1,28 @@
 'use strict'
 const api = require('express').Router()
-const db = require('../db')
 const axios = require('axios');
 const sanitizeHtml = require('sanitize-html')
 const md5 = require('md5');
+const Neighborhood = require('./db/models/neighborhood');
+const City = require('./db/models/city');
 
 api.get('/hello', (req, res) => res.send({hello: 'world'}))
+
+api.get('/city', (req, res) => {
+	City.findAll()
+	.then(cities => {
+		res.send(cities);
+	})
+})
 
 // get list of neighborhoods for a particular city
 api.get('/city/:cityId/neighborhoods', (req, res) => {
 	const cityId = req.params.cityId;
-	axios.get(`https://neighborland.com/api/v1/cities/${cityId}/neighborhoods`)
-	.then(response => {
-		res.send(response.data);
+	Neighborhood.findAll({
+		where: {cityId}
 	})
-	.catch(err => {
-		console.log(err);
-	})
-})
-
-// get the wikipedia article for all neighborhoods in a city and place on neighborhoods object
-api.post('/city/:cityId/neighborhoods/wikiData', (req, res) => {
-	// extract the neighborhood and city name, and replace all spaces with %20 for insertion into query string
-	let {neighborhood, city} = req.body;
-	let neighborhoodName = neighborhood.name.replace(/ /g, '%20').replace(/-/g, '%E2%80%93');
-	city.name = city.name.replace(/ /g, '%20');
-
-	let result = {};
-	let test = '';
-
-	// make query to wikipedia to get the top results for that neighborhood name, city name, and the word 'neighborhood'
-	axios.get(`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${neighborhoodName}%20neighborhood%20${city.name}&format=json`)
-	.then(apiRes => {
-		const queryResult = apiRes.data.query.search;
-		
-		// find the first result that doesn't include 'list', 'station', or 'neighborhoods' in the title
-		const article = queryResult.find(article => {
-			return article.title.includes('List') === false &&
-			article.title.includes('Station') === false &&
-			article.title.includes('Neighborhoods') === false &&
-			article.title.includes('rebranding') === false &&
-			article.title.includes('disambiguation') === false &&
-			article.title.includes('Yorkville, New York') === false
-		})
-		let wikiTitle = article.title.replace(/ /g, '%20').replace('–', '%E2%80%93');;
-		let wikiSnippet = sanitizeHtml(article.snippet, {
-			allowedTags: [],
-			allowedAttributes: []
-		}).replace(/(\d+)\; -(\d+).(\d+)/g, '').replace(/-(\d+).(\d+)/g, '').replace(/&quot;/g, '').replace(/°N 73\.987°W\ufeff \/ 40\. /g, '');
-
-		let characters = '0123456789./%-';
-		while (characters.includes(wikiSnippet[0])) {
-			wikiSnippet = wikiSnippet.slice(1);
-		}
-
-		result.wikiTitle = wikiTitle;
-		result.wikiSnippet = wikiSnippet;
-		
-		return axios.get(`https://en.wikipedia.org/w/api.php?action=query&format=json&titles=${result.wikiTitle}&prop=revisions&rvprop=content`)
-	})
-	.then(apiRes => {
-		const pages = apiRes.data.query.pages;
-		const keys = Object.keys(pages);
-		const text = pages[keys[0]].revisions[0]['*'];
-		const wikiText = sanitizeHtml(text, {
-			allowedTags: [],
-			allowedAttributes: []
-		}).replace(/\{\{Infobox NRHP/g, '').replace(/\n|\|thumb(.*?)px\||\|/g, ' ').replace(/\{\{(.*?)\}\}|\[http(.*?)\]|&quot;|\[\[|\]\]|'''|File:|.jpg|.png|.gif/g, '').slice(0, 3500);
-		result.wikiText = wikiText;
-		res.send(result);
-	})
-	.catch(err => {
-		console.log('request failed at neighborhood:', neighborhood.name);
-		console.log(err);
+	.then(neighborhoods => {
+		res.send(neighborhoods);
 	})
 })
 
@@ -81,7 +31,7 @@ api.post('/comparisons/overall', (req, res) => {
 	let query = [];
 
 	neighborhoods.forEach(neighborhood => {
-		const singleQuery = [{"text": criterium.name}, {"text": neighborhood[option1]}]
+		const singleQuery = [{"text": criterium}, {"text": neighborhood[option1]}]
 		query.push(singleQuery);
 	})
 

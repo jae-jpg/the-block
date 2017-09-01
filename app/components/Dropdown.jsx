@@ -1,10 +1,10 @@
 import React from 'react';
 import { Dropdown } from 'semantic-ui-react';
 import { connect } from 'react-redux';
-import { setCity } from '../store';
+import { setCity, getCityNeighborhoods } from '../store';
 
 function RootDropdown(props) {
-  const cityList = props.cityList.map(city => {
+  const cities = props.cities.map(city => {
     return {
       key: city.id,
       value: city.id,
@@ -17,10 +17,16 @@ function RootDropdown(props) {
       placeholder="Choose a city"
       search
       selection
-      options={cityList}
+      options={cities}
       onChange={props.handleChange}
     />
   )
+}
+
+function mapState(state){
+  return {
+    cities: state.cities
+  }
 }
 
 function mapDispatch(dispatch, ownProps){
@@ -31,4 +37,4 @@ function mapDispatch(dispatch, ownProps){
   }
 }
 
-export default connect(null, mapDispatch)(RootDropdown);
+export default connect(mapState, mapDispatch)(RootDropdown);
