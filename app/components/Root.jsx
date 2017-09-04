@@ -5,6 +5,7 @@ import {Link} from 'react-router-dom';
 import Dropdown from './Dropdown';
 import Transition from 'react-motion-ui-pack';
 import { spring } from 'react-motion';
+import { Container, Title, Form, Button } from './styled'
 
 class Root extends Component {
   constructor(props){
@@ -18,7 +19,9 @@ class Root extends Component {
 
   handleSubmit(event){
     event.preventDefault();
-    this.props.history.push(`/city/${this.props.city.id}`);
+    if (this.props.city.id !== undefined) {
+      this.props.history.push(`/city/${this.props.city.id}`);
+    }
   }
 
   render() {
@@ -36,13 +39,13 @@ class Root extends Component {
           translateX: 250
         }}
       >
-        <div key="1" className="root-container">
-          <h1 className="root-item">Where would you like to live?</h1>
-          <form className="root-form" onSubmit={this.handleSubmit}>
+        <Container key="1">
+          <Title className="root-item">Where would you like to live?</Title>
+          <Form onSubmit={this.handleSubmit}>
             <Dropdown />
-            <button type="submit" className="root-submit-button"><i className="fa fa-arrow-right white"></i></button>
-          </form>
-        </div>
+            <Button type="submit" className="root-submit-button"><i className="material-icons">arrow_forward</i></Button>
+          </Form>
+        </Container>
       </Transition>
     )
   }

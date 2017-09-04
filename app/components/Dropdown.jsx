@@ -1,38 +1,45 @@
 import React from 'react';
-import { Dropdown } from 'semantic-ui-react';
+import DropDownMenu from 'material-ui/DropDownMenu';
+import MenuItem from 'material-ui/MenuItem';
 import { connect } from 'react-redux';
 import { setCity, getCityNeighborhoods } from '../store';
 
-function RootDropdown(props) {
-  const cities = props.cities.map(city => {
-    return {
-      key: city.id,
-      value: city.id,
-      text: city.name
-    }
-  })
+const styles = {
+  customWidth: {
+    width: '25vw',
+  }
+};
 
+function RootDropdown(props) {
   return (
-    <Dropdown
-      placeholder="Choose a city"
-      search
-      selection
-      options={cities}
-      onChange={props.handleChange}
-    />
+    <div>
+      <DropDownMenu
+        value={props.city.id || 0}
+        onChange={props.handleChange}
+        autoWidth={false}
+        style={styles.customWidth}
+        labelStyle={{color: '#CBCBCB', fontFamily: 'Montserrat', fontSize: '24px'}}
+        maxHeight={200}>
+          <MenuItem value={0} primaryText="Choose a city" />
+          {props.cities.map(city => {
+            return (<MenuItem key={city.id} value={city.id} primaryText={city.name} />)
+          })}
+      </DropDownMenu>
+    </div>
   )
 }
 
 function mapState(state){
   return {
-    cities: state.cities
+    cities: state.cities,
+    city: state.city
   }
 }
 
 function mapDispatch(dispatch, ownProps){
   return {
-    handleChange: function(event, data){
-      dispatch(setCity(data.value));
+    handleChange: function(event, index){
+      dispatch(setCity(index));
     }
   }
 }
