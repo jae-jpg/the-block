@@ -68513,7 +68513,7 @@
 	      case 'Getting comparisons 1':
 	        return 'Gathering data...';
 	      case 'Getting comparisons 2':
-	        return 'Picking the best neighborhoods...';
+	        return 'Ranking neighborhoods...';
 	      case 'Getting comparisons 3':
 	        return 'Tallying up the score (any minute now...)';
 	      default:
