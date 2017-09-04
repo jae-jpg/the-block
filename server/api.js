@@ -6,7 +6,6 @@ const md5 = require('md5');
 const Neighborhood = require('./db/models/neighborhood');
 const City = require('./db/models/city');
 
-api.get('/hello', (req, res) => res.send({hello: 'world'}))
 
 api.get('/city', (req, res) => {
 	City.findAll()
@@ -38,7 +37,7 @@ api.post('/comparisons/overall', (req, res) => {
 	axios.post(
 		`http://api.cortical.io:80/rest/compare/bulk?retina_name=en_associative`,
 		query,
-		{headers: {'api-key': '64d8f960-6cae-11e7-b22d-93a4ae922ff1'}
+		{headers: {'api-key': process.env.CORTICAL_KEY}
 	})
 	.then(apiRes => {
 		res.send(apiRes.data);
@@ -48,19 +47,4 @@ api.post('/comparisons/overall', (req, res) => {
 	})
 });
 
-module.exports = api
-
-	// 	return axios.get(`https://en.wikipedia.org/w/api.php?action=query&format=json&titles=${wikiTitle}&prop=pageimages`)
-	// })
-	// .then(apiRes => {
-	// 	const pages = apiRes.data.query.pages;
-	// 	const keys = Object.keys(pages);
-	// 	const pageImage = pages[keys[0]].pageimage;
-	// 	if (pageImage) {
-	// 		const hashedImage = md5(pageImage)
-
-	// 		const wikiImage = `https://upload.wikimedia.org/wikipedia/commons/${hashedImage[0]}/${hashedImage[0]}${hashedImage[1]}/${pageImage}`
-	// 		result.wikiImage = wikiImage;
-	// 	} else {
-	// 		result.wikiImage = 'http://img-aws.ehowcdn.com/560x560p/photos.demandstudios.com/getty/article/152/77/87578869.jpg';
-	// 	}
+module.exports = api;
