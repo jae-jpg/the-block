@@ -14,7 +14,7 @@ function RootDropdown(props) {
   return (
     <div>
       <DropDownMenu
-        value={props.city.id || 0}
+        value={props.city && props.city.id || 0}
         onChange={props.handleChange}
         autoWidth={false}
         style={styles.customWidth}
