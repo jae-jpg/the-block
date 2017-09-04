@@ -1,6 +1,17 @@
 import React from 'react';
 import store, {newInput, setCriteria, rankNeighborhoods} from '../store'
 import { connect } from 'react-redux';
+import { Container, Title, Button, Form } from './styled'
+import TextField from 'material-ui/TextField';
+
+const textFieldStyle = {
+  color: '#CBCBCB',
+  fontFamily: 'Montserrat',
+  fontSize: '24px',
+  textAlign: 'center',
+  width: '100%',
+  paddingBottom: '6px'
+};
 
 class InputForm extends React.Component {
   constructor(){
@@ -22,18 +33,20 @@ class InputForm extends React.Component {
 
   render(){
     return (
-      <div className="criteria-container">
-        <h1 className="criteria-item criteria-question">What are you looking for in a neighborhood?</h1>
-        <h3 className="criteria-prompt">You can write anything here! The more ideas the better.</h3>
-        <form className="criteria-item criteria-form" onSubmit={this.handleSubmit}>
-          <input
-            autoFocus
-            className="criteria-input"
+      <Container>
+        <Title>What are you looking for in a neighborhood?</Title>
+        <Form style={{width: '100%'}} onSubmit={this.handleSubmit}>
+          <TextField
+            hintText="Try: lots of parks, or safe schools"
             onChange={this.handleChange}
-          ></input>
-          <button type="submit" className="input-submit-button">Submit</button>
-        </form>
-      </div>
+            style={{width: '50%', textAlign: 'center', paddingBottom: '6px'}}
+            inputStyle={textFieldStyle}
+            hintStyle={textFieldStyle}
+            underlineStyle={{borderColor: '#EDB67B'}}
+          />
+          <Button type="submit"><i className="material-icons">arrow_forward</i></Button>
+        </Form>
+      </Container>
     )
   }
 }

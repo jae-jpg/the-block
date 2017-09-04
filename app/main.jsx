@@ -12,22 +12,41 @@ import Results from './components/Results';
 import Loadscreen from './components/Loadscreen';
 import Footer from './components/Footer';
 
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+
+const muiTheme = getMuiTheme({
+  palette: {
+    primary1Color: "#EDB67B",
+    primary2Color: "#EDB67B",
+    primary3Color: "#EDB67B",
+    accent1Color: "#EDB67B",
+    accent2Color: "#EDB67B",
+    accent3Color: "#EDB67B" 
+  },
+  dropDownMenu: {
+    accentColor: '#EDB67B'
+  },
+});
+
 render (
   <Provider store={store}>
-    <Router>
-      <div className="main">
-        <div className="content">
-          <Switch>
-            <Route path='/city/:cityId' component={SingleCityContainer}/>
-            <Route path='/test' component={Results}/>
-            <Route component={Root}/>
-          </Switch>
+    <MuiThemeProvider muiTheme={muiTheme}>  
+      <Router>
+        <div className="main">
+          <div className="footer">
+            <Footer />
+          </div>
+          <div className="content">
+            <Switch>
+              <Route path='/city/:cityId' component={SingleCityContainer}/>
+              <Route path='/test' component={Results}/>
+              <Route component={Root}/>
+            </Switch>
+          </div>
         </div>
-        <div className="footer">
-          <Footer />
-        </div>
-      </div>
-    </Router>
+      </Router>
+    </MuiThemeProvider>
   </Provider>,
   document.getElementById('main')
 )

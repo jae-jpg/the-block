@@ -2,6 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux'
 import Transition from 'react-motion-ui-pack';
 import { spring } from 'react-motion';
+import { Container, Title } from './styled'
 
 function Loadscreen(props){
   function loadMessage(){
@@ -31,11 +32,11 @@ function Loadscreen(props){
         translateX: 250
       }}
     >
-      <div key="3" className="loading-container">
-        <h1 className="loading1">Loading...</h1>
+      <Container key="3">
+        <Title className="loading1">Loading...</Title>
         <h2 className="loading2">{loadMessage()}</h2>
         <img className="icon" src="/images/Eclipse.svg"/>
-      </div>
+      </Container>
     </Transition>
   )
 }
