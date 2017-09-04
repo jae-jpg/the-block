@@ -20,9 +20,9 @@ function RootDropdown(props) {
         style={styles.customWidth}
         labelStyle={{color: '#CBCBCB', fontFamily: 'Montserrat', fontSize: '24px'}}
         maxHeight={200}>
-          <MenuItem value={0} primaryText="Choose a city" />
+          <MenuItem value={0} primaryText="Choose a city" style={{fontFamily: 'Montserrat'}}/>
           {props.cities.map(city => {
-            return (<MenuItem key={city.id} value={city.id} primaryText={city.name} />)
+            return (<MenuItem key={city.id} value={city.id} primaryText={city.name} style={{fontFamily: 'Montserrat'}}/>)
           })}
       </DropDownMenu>
     </div>

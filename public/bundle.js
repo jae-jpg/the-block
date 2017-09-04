@@ -47460,9 +47460,9 @@
 	        style: styles.customWidth,
 	        labelStyle: { color: '#CBCBCB', fontFamily: 'Montserrat', fontSize: '24px' },
 	        maxHeight: 200 },
-	      _react2.default.createElement(_MenuItem2.default, { value: 0, primaryText: 'Choose a city' }),
+	      _react2.default.createElement(_MenuItem2.default, { value: 0, primaryText: 'Choose a city', style: { fontFamily: 'Montserrat' } }),
 	      props.cities.map(function (city) {
-	        return _react2.default.createElement(_MenuItem2.default, { key: city.id, value: city.id, primaryText: city.name });
+	        return _react2.default.createElement(_MenuItem2.default, { key: city.id, value: city.id, primaryText: city.name, style: { fontFamily: 'Montserrat' } });
 	      })
 	    )
 	  );
@@ -61917,14 +61917,14 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.Description = exports.Neighborhood = exports.Rank = exports.Form = exports.NavLink = exports.Container = exports.Title = exports.Button = undefined;
+	exports.Description = exports.Neighborhood = exports.Rank = exports.Button = exports.Form = exports.NavLink = exports.Container = exports.Title = undefined;
 	
-	var _templateObject = _taggedTemplateLiteral(['\n  border: 0px;\n  height: 37px;\n  width: 37px;\n  margin: 0px 0px;\n  padding: 0px 0px;\n  height: 36px;\n  border-top-right-radius: 5px;\n  border-bottom-right-radius: 5px;\n'], ['\n  border: 0px;\n  height: 37px;\n  width: 37px;\n  margin: 0px 0px;\n  padding: 0px 0px;\n  height: 36px;\n  border-top-right-radius: 5px;\n  border-bottom-right-radius: 5px;\n']),
-	    _templateObject2 = _taggedTemplateLiteral(['\n  font-size: 52px;\n'], ['\n  font-size: 52px;\n']),
-	    _templateObject3 = _taggedTemplateLiteral(['\n  display: flex;\n  flex-direction: column;\n  height: 100%;\n  justify-content: center;\n  align-items: center;\n'], ['\n  display: flex;\n  flex-direction: column;\n  height: 100%;\n  justify-content: center;\n  align-items: center;\n']),
-	    _templateObject4 = _taggedTemplateLiteral(['\n  color: #CBCBCB;\n  margin-top: 0px;\n'], ['\n  color: #CBCBCB;\n  margin-top: 0px;\n']),
-	    _templateObject5 = _taggedTemplateLiteral(['\n  margin: 0px;\n  padding: 0px;\n  display: flex;\n  height: 45px;\n  align-items: center;\n  justify-content: center;\n'], ['\n  margin: 0px;\n  padding: 0px;\n  display: flex;\n  height: 45px;\n  align-items: center;\n  justify-content: center;\n']),
-	    _templateObject6 = _taggedTemplateLiteral(['\n  padding: 0px 0px;\n  margin: 0px 0px;\n  color: #1E555C;\n'], ['\n  padding: 0px 0px;\n  margin: 0px 0px;\n  color: #1E555C;\n']),
+	var _templateObject = _taggedTemplateLiteral(['\nfont-size: 52px;\n'], ['\nfont-size: 52px;\n']),
+	    _templateObject2 = _taggedTemplateLiteral(['\ndisplay: flex;\nflex-direction: column;\nheight: 100%;\njustify-content: center;\nalign-items: center;\n'], ['\ndisplay: flex;\nflex-direction: column;\nheight: 100%;\njustify-content: center;\nalign-items: center;\n']),
+	    _templateObject3 = _taggedTemplateLiteral(['\ncolor: #CBCBCB;\nmargin-top: 0px;\n'], ['\ncolor: #CBCBCB;\nmargin-top: 0px;\n']),
+	    _templateObject4 = _taggedTemplateLiteral(['\nmargin: 0px;\npadding: 0px;\ndisplay: flex;\nheight: 45px;\nalign-items: center;\njustify-content: center;\n'], ['\nmargin: 0px;\npadding: 0px;\ndisplay: flex;\nheight: 45px;\nalign-items: center;\njustify-content: center;\n']),
+	    _templateObject5 = _taggedTemplateLiteral(['\n  border: 0px;\n  height: 37px;\n  width: 37px;\n  margin: 0px 0px;\n  padding: 0px 0px;\n  height: 36px;\n  background-color: white;\n  border-top-right-radius: 5px;\n  border-bottom-right-radius: 5px;\n'], ['\n  border: 0px;\n  height: 37px;\n  width: 37px;\n  margin: 0px 0px;\n  padding: 0px 0px;\n  height: 36px;\n  background-color: white;\n  border-top-right-radius: 5px;\n  border-bottom-right-radius: 5px;\n']),
+	    _templateObject6 = _taggedTemplateLiteral(['\npadding: 0px 0px;\nmargin: 0px 0px;\ncolor: #1E555C;\n'], ['\npadding: 0px 0px;\nmargin: 0px 0px;\ncolor: #1E555C;\n']),
 	    _templateObject7 = _taggedTemplateLiteral(['\n  color: #E8A155;\n  margin-bottom: 3px;\n'], ['\n  color: #E8A155;\n  margin-bottom: 3px;\n']),
 	    _templateObject8 = _taggedTemplateLiteral(['\n  margin: 0px 5px;\n  padding: 0px 5px;\n'], ['\n  margin: 0px 5px;\n  padding: 0px 5px;\n']);
 	
@@ -61936,15 +61936,14 @@
 	
 	function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 	
-	var Button = exports.Button = _styledComponents2.default.button(_templateObject);
+	var Title = exports.Title = _styledComponents2.default.h1(_templateObject);
 	
-	var Title = exports.Title = _styledComponents2.default.h1(_templateObject2);
+	var Container = exports.Container = _styledComponents2.default.div(_templateObject2);
 	
-	var Container = exports.Container = _styledComponents2.default.div(_templateObject3);
+	var NavLink = exports.NavLink = _styledComponents2.default.h3(_templateObject3);
 	
-	var NavLink = exports.NavLink = _styledComponents2.default.h3(_templateObject4);
-	
-	var Form = exports.Form = _styledComponents2.default.form(_templateObject5);
+	var Form = exports.Form = _styledComponents2.default.form(_templateObject4);
+	var Button = exports.Button = _styledComponents2.default.button(_templateObject5);
 	
 	var Rank = exports.Rank = _styledComponents2.default.h3(_templateObject6);
 	
