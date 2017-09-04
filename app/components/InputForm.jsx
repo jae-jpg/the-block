@@ -34,10 +34,10 @@ class InputForm extends React.Component {
   render(){
     return (
       <Container>
-        <Title>What are you looking for in a neighborhood?</Title>
+        <Title>Describe your ideal neighborhood.</Title>
         <Form style={{width: '100%'}} onSubmit={this.handleSubmit}>
           <TextField
-            hintText="Try: lots of parks, or safe schools"
+            hintText="Try 'lots of parks', or 'good schools'"
             onChange={this.handleChange}
             style={{width: '50%', textAlign: 'center', paddingBottom: '6px'}}
             inputStyle={textFieldStyle}

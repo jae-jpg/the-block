@@ -66282,13 +66282,13 @@
 	        _react2.default.createElement(
 	          _styled.Title,
 	          null,
-	          'What are you looking for in a neighborhood?'
+	          'Describe your ideal neighborhood.'
 	        ),
 	        _react2.default.createElement(
 	          _styled.Form,
 	          { style: { width: '100%' }, onSubmit: this.handleSubmit },
 	          _react2.default.createElement(_TextField2.default, {
-	            hintText: 'Try: lots of parks, or safe schools',
+	            hintText: 'Try \'lots of parks\', or \'good schools\'',
 	            onChange: this.handleChange,
 	            style: { width: '50%', textAlign: 'center', paddingBottom: '6px' },
 	            inputStyle: textFieldStyle,

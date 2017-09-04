@@ -3,7 +3,8 @@ const City = require('./server/db/models/city');
 const Neighborhood = require('./server/db/models/neighborhood');
 const axios = require('axios');
 const sanitizeHtml = require('sanitize-html')
-const md5 = require('md5');const Promise = require('bluebird');
+const md5 = require('md5');
+const Promise = require('bluebird');
 console.log('process db url:', process.env.DATABASE_URL)
 
 const cities = [
@@ -13,7 +14,7 @@ const cities = [
   {name: 'Houston', neighborlandId: 'hou'},
   {name: 'Los Angeles', neighborlandId: 'la'},
   {name: 'New York', neighborlandId: 'nyc'},
-  // {name: 'Philadelphia', neighborlandId: 'philly'},
+  {name: 'Philadelphia', neighborlandId: 'philly'},
   {name: 'San Francisco', neighborlandId: 'sf'},
   {name: 'Seattle', neighborlandId: 'sea'},
   {name: 'Washington, DC', neighborlandId: 'dc'},
