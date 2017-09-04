@@ -8,7 +8,8 @@
     "seed": "node run seed",
     "test": "mocha **/*.test.js *.test.js",
     "build": "webpack",
-    "build-watch": "webpack -w"
+    "build-watch": "webpack -w",
+    "deploy": "git pull heroku master && webpack && git add -f public/bundle.js public/bundle.js.map && git commit --allow-empty -m 'Deploying' && git push heroku deploy:master"    
   },
   "keywords": [
     "react",

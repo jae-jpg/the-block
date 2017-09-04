@@ -4,6 +4,7 @@ const Neighborhood = require('./server/db/models/neighborhood');
 const axios = require('axios');
 const sanitizeHtml = require('sanitize-html')
 const md5 = require('md5');const Promise = require('bluebird');
+console.log('process db url:', process.env.DATABASE_URL)
 
 const cities = [
   {name: 'Boston', neighborlandId: 'bos'},    
