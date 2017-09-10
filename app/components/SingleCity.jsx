@@ -7,6 +7,8 @@ import Results from './Results';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import Transition from 'react-motion-ui-pack';
 import { spring } from 'react-motion';
+import {Container} from './styled' 
+
 
 export default class SingleCity extends React.Component {
   constructor(props){
@@ -26,9 +28,9 @@ export default class SingleCity extends React.Component {
           translateX: 250
         }}
       >
-        <div key="2" className="neighborhoods-container">
+        <Container key="2">
           <InputForm/>
-        </div>
+        </Container>
       </Transition>
     )
   }

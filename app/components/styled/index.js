@@ -54,3 +54,28 @@ export const Description = styled.p`
   margin: 0px 5px;
   padding: 0px 5px;
 `
+export const Card = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 25%;
+  padding: 20px;  
+  text-align: center;
+  background-color: white;
+  background-image: linear-gradient(white, #EFECEA);
+  border-radius: 5px;
+  box-shadow: 0px 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  &:hover{
+    background-image: linear-gradient(#F7F7F7, #F7F7F7);
+  }
+`
+
+export const Row = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  padding-left: 100px;
+  padding-right: 100px;
+  color: #565353;
+  margin: 20px 0px;
+`

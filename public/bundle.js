@@ -61917,7 +61917,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.Description = exports.Neighborhood = exports.Rank = exports.Button = exports.Form = exports.NavLink = exports.Container = exports.Title = undefined;
+	exports.Row = exports.Card = exports.Description = exports.Neighborhood = exports.Rank = exports.Button = exports.Form = exports.NavLink = exports.Container = exports.Title = undefined;
 	
 	var _templateObject = _taggedTemplateLiteral(['\n  font-size: 52px;\n  text-align: center;\n'], ['\n  font-size: 52px;\n  text-align: center;\n']),
 	    _templateObject2 = _taggedTemplateLiteral(['\n  display: flex;\n  flex-direction: column;\n  height: 100%;\n  justify-content: center;\n  align-items: center;\n  text-align: center;\n'], ['\n  display: flex;\n  flex-direction: column;\n  height: 100%;\n  justify-content: center;\n  align-items: center;\n  text-align: center;\n']),
@@ -61926,7 +61926,9 @@
 	    _templateObject5 = _taggedTemplateLiteral(['\n  border: 0px;\n  height: 37px;\n  width: 37px;\n  margin: 0px 0px;\n  padding: 0px 0px;\n  height: 36px;\n  background-color: white;\n  border-top-right-radius: 5px;\n  border-bottom-right-radius: 5px;\n'], ['\n  border: 0px;\n  height: 37px;\n  width: 37px;\n  margin: 0px 0px;\n  padding: 0px 0px;\n  height: 36px;\n  background-color: white;\n  border-top-right-radius: 5px;\n  border-bottom-right-radius: 5px;\n']),
 	    _templateObject6 = _taggedTemplateLiteral(['\n  padding: 0px 0px;\n  margin: 0px 0px;\n  color: #1E555C;\n'], ['\n  padding: 0px 0px;\n  margin: 0px 0px;\n  color: #1E555C;\n']),
 	    _templateObject7 = _taggedTemplateLiteral(['\n  color: #E8A155;\n  margin-bottom: 3px;\n'], ['\n  color: #E8A155;\n  margin-bottom: 3px;\n']),
-	    _templateObject8 = _taggedTemplateLiteral(['\n  margin: 0px 5px;\n  padding: 0px 5px;\n'], ['\n  margin: 0px 5px;\n  padding: 0px 5px;\n']);
+	    _templateObject8 = _taggedTemplateLiteral(['\n  margin: 0px 5px;\n  padding: 0px 5px;\n'], ['\n  margin: 0px 5px;\n  padding: 0px 5px;\n']),
+	    _templateObject9 = _taggedTemplateLiteral(['\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  width: 25%;\n  padding: 20px;  \n  text-align: center;\n  background-color: white;\n  background-image: linear-gradient(white, #EFECEA);\n  border-radius: 5px;\n  box-shadow: 0px 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);\n  &:hover{\n    background-image: linear-gradient(#F7F7F7, #F7F7F7);\n  }\n'], ['\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  width: 25%;\n  padding: 20px;  \n  text-align: center;\n  background-color: white;\n  background-image: linear-gradient(white, #EFECEA);\n  border-radius: 5px;\n  box-shadow: 0px 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);\n  &:hover{\n    background-image: linear-gradient(#F7F7F7, #F7F7F7);\n  }\n']),
+	    _templateObject10 = _taggedTemplateLiteral(['\n  display: flex;\n  width: 100%;\n  justify-content: space-around;\n  padding-left: 100px;\n  padding-right: 100px;\n  color: #565353;\n  margin: 20px 0px;\n'], ['\n  display: flex;\n  width: 100%;\n  justify-content: space-around;\n  padding-left: 100px;\n  padding-right: 100px;\n  color: #565353;\n  margin: 20px 0px;\n']);
 	
 	var _styledComponents = __webpack_require__(498);
 	
@@ -61950,6 +61952,9 @@
 	var Neighborhood = exports.Neighborhood = _styledComponents2.default.h3(_templateObject7);
 	
 	var Description = exports.Description = _styledComponents2.default.p(_templateObject8);
+	var Card = exports.Card = _styledComponents2.default.div(_templateObject9);
+	
+	var Row = exports.Row = _styledComponents2.default.div(_templateObject10);
 
 /***/ }),
 /* 498 */
@@ -66155,6 +66160,8 @@
 	
 	var _reactMotion = __webpack_require__(485);
 	
+	var _styled = __webpack_require__(497);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -66189,8 +66196,8 @@
 	          }
 	        },
 	        _react2.default.createElement(
-	          'div',
-	          { key: '2', className: 'neighborhoods-container' },
+	          _styled.Container,
+	          { key: '2' },
 	          _react2.default.createElement(_InputForm2.default, null)
 	        )
 	      );
@@ -67591,6 +67598,33 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function Results(props) {
+	  var testData1 = [{ alternate_url: "http://neighborland.com/neighborhoods/nyc-battery-park-city",
+	    id: "nyc-battery-park-city",
+	    name: "Battery Park City",
+	    url: "http://neighborland.com/api/v1/neighborhoods/nyc-battery-park-city",
+	    wikiImage: "https://upload.wikimedia.org/wikipedia/commons/7/71/Columbus_Monument_(New_York_City)_-_DSC05923.JPG",
+	    wikiSnippet: " Battery Park City is a mainly residential 92-acre (37 ha) planned community on the west side of the southern tip of the island of Manhattan in New York",
+	    wikiTitle: "Battery%20Park%20City" }];
+	  var testData2 = [{ alternate_url: "http://neighborland.com/neighborhoods/nyc-battery-park-city",
+	    id: "1",
+	    name: "Battery Park City",
+	    url: "http://neighborland.com/api/v1/neighborhoods/nyc-battery-park-city",
+	    wikiImage: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Battery_Park_City_8971.JPG",
+	    wikiSnippet: " Battery Park City is a mainly residential 92-acre (37 ha) planned community on the west side of the southern tip of the island of Manhattan in New York",
+	    wikiTitle: "Battery%20Park%20City" }, { alternate_url: "http://neighborland.com/neighborhoods/nyc-battery-park-city",
+	    id: "2",
+	    name: "Battery Park City",
+	    url: "http://neighborland.com/api/v1/neighborhoods/nyc-battery-park-city",
+	    wikiImage: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Battery_Park_City_8971.JPG",
+	    wikiSnippet: " Battery Park City is a mainly residential 92-acre (37 ha) planned community on the west side of the southern tip of the island of Manhattan in New York",
+	    wikiTitle: "Battery%20Park%20City" }, { alternate_url: "http://neighborland.com/neighborhoods/nyc-battery-park-city",
+	    id: "3",
+	    name: "Battery Park City",
+	    url: "http://neighborland.com/api/v1/neighborhoods/nyc-battery-park-city",
+	    wikiImage: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Battery_Park_City_8971.JPG",
+	    wikiSnippet: " Battery Park City is a mainly residential 92-acre (37 ha) planned community on the west side of the southern tip of the island of Manhattan in New York",
+	    wikiTitle: "Battery%20Park%20City" }];
+	
 	  return _react2.default.createElement(
 	    _reactAddonsCssTransitionGroup2.default,
 	    {
@@ -67601,93 +67635,79 @@
 	      transitionLeave: false
 	    },
 	    _react2.default.createElement(
-	      'div',
-	      { className: 'results-container' },
+	      _styled.Container,
+	      null,
 	      _react2.default.createElement(
 	        'h1',
 	        null,
 	        'Have you considered...'
 	      ),
 	      _react2.default.createElement(
-	        'div',
-	        { className: 'top-result-container' },
-	        props.topResult.map(function (neighborhood) {
+	        _styled.Row,
+	        null,
+	        testData1.map(function (neighborhood) {
 	          return _react2.default.createElement(
-	            'div',
-	            {
-	              key: neighborhood.id,
-	              className: 'secondary-results-item'
-	            },
+	            _styled.Card,
+	            { key: neighborhood.id },
 	            _react2.default.createElement(
-	              'div',
-	              { className: 'secondary-results-content' },
+	              _styled.Rank,
+	              null,
+	              '#1'
+	            ),
+	            _react2.default.createElement(
+	              _styled.Neighborhood,
+	              null,
+	              neighborhood.name.toUpperCase()
+	            ),
+	            _react2.default.createElement(
+	              _styled.Description,
+	              null,
+	              neighborhood.wikiSnippet,
+	              '...'
+	            ),
+	            _react2.default.createElement(
+	              'a',
+	              { href: 'https://en.wikipedia.org/wiki/' + neighborhood.wikiTitle },
 	              _react2.default.createElement(
-	                _styled.Rank,
-	                null,
-	                '#1'
-	              ),
-	              _react2.default.createElement(
-	                _styled.Neighborhood,
-	                null,
-	                neighborhood.name.toUpperCase()
-	              ),
-	              _react2.default.createElement(
-	                _styled.Description,
-	                null,
-	                neighborhood.wikiSnippet,
-	                '...'
-	              ),
-	              _react2.default.createElement(
-	                'a',
-	                { href: 'https://en.wikipedia.org/wiki/' + neighborhood.wikiTitle },
-	                _react2.default.createElement(
-	                  'p',
-	                  { className: 'explore' },
-	                  'EXPLORE'
-	                )
+	                'p',
+	                { className: 'explore' },
+	                'EXPLORE'
 	              )
 	            )
 	          );
 	        })
 	      ),
 	      _react2.default.createElement(
-	        'div',
-	        { className: 'top-result-container' },
-	        props.neighborhoods.map(function (neighborhood, idx) {
+	        _styled.Row,
+	        null,
+	        testData2.map(function (neighborhood, idx) {
 	          return _react2.default.createElement(
-	            'div',
-	            {
-	              key: neighborhood.id,
-	              className: 'secondary-results-item'
-	            },
+	            _styled.Card,
+	            { key: neighborhood.id },
 	            _react2.default.createElement(
-	              'div',
-	              { className: 'secondary-results-content' },
+	              _styled.Rank,
+	              null,
+	              '#',
+	              idx + 2
+	            ),
+	            _react2.default.createElement(
+	              _styled.Neighborhood,
+	              null,
+	              neighborhood.name.toUpperCase()
+	            ),
+	            _react2.default.createElement(
+	              _styled.Description,
+	              null,
+	              neighborhood.wikiSnippet,
+	              '...'
+	            ),
+	            _react2.default.createElement(
+	              'a',
+	              { href: 'https://en.wikipedia.org/wiki/' + neighborhood.wikiTitle },
 	              _react2.default.createElement(
-	                _styled.Rank,
-	                null,
-	                '#',
-	                idx + 2
-	              ),
-	              _react2.default.createElement(
-	                _styled.Neighborhood,
-	                null,
-	                neighborhood.name.toUpperCase()
-	              ),
-	              _react2.default.createElement(
-	                _styled.Description,
-	                null,
-	                neighborhood.wikiSnippet,
-	                '...'
-	              ),
-	              _react2.default.createElement(
-	                'a',
-	                { href: 'https://en.wikipedia.org/wiki/' + neighborhood.wikiTitle },
-	                _react2.default.createElement(
-	                  'p',
-	                  { className: 'explore' },
-	                  'EXPLORE'
-	                )
+	                'p',
+	                { className: 'explore' },
+	                'EXPLORE'
 	              )
 	            )
 	          );
@@ -67706,24 +67726,6 @@
 	}
 	
 	exports.default = (0, _reactRedux.connect)(mapState)(Results);
-	
-	// MORE OPTIONS
-	// <div className="secondary-results-container">
-	//   {
-	//     testData2.map(neighborhood => (
-	//       <div
-	//         key={neighborhood.id}
-	//         className="secondary-results-item"       
-	//       >
-	//         <img src={neighborhood.wikiImage}/>
-	//         <div className="secondary-results-content">
-	//           <h3>{neighborhood.name.toUpperCase()}</h3>
-	//           <span>{neighborhood.wikiSnippet}...</span>
-	//         </div>
-	//       </div>
-	//     ))
-	//   }
-	// </div>
 
 /***/ }),
 /* 540 */
