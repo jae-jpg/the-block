@@ -120,9 +120,24 @@ export function getIndividualComparisons(option1, option2){
           return neighborhood;
         });
 
-        const groupAverage = findAverage(neighborhoods.map(n => (((n.averageSnippetScore) + (n.averageTextScore * 4)) / 5)))
+        const groupAverage = findAverage(neighborhoods.map(n => (((n.averageSnippetScore) + (n.averageTextScore)) / 2)))
         // console.log('group average', groupAverage)
-        neighborhoods = sortByScore(neighborhoods, groupAverage);
+        let mapNeighborhoods = neighborhoods.map(n => {
+          const snip = Number(n.averageSnippetScore.toFixed(2));
+          const text = Number(n.averageTextScore.toFixed(2))
+          const diff = Math.abs(snip - text)
+          return {name: n.name, snip, text, diff}
+        });
+        const avgDiff = mapNeighborhoods.reduce((acc, el) => acc + el.diff, 0) / mapNeighborhoods.length
+        neighborhoods = sortByScore(neighborhoods, groupAverage, avgDiff);
+        mapNeighborhoods = neighborhoods.map(n => {
+          const snip = Number(n.averageSnippetScore.toFixed(2));
+          const text = Number(n.averageTextScore.toFixed(2))
+          const diff = Math.abs(snip - text)
+          return {name: n.name, snip, text, diff}
+        });
+        console.log('avg diff', avgDiff);
+        console.log(mapNeighborhoods);
         dispatch(updateNeighborhoods(neighborhoods));
         dispatch(setStatus('Results loaded'));
       }
@@ -140,17 +155,22 @@ function findAverage(array){
   } 
 }
 
-function sortByScore(neighborhoods, groupAverage){
+function sortByScore(neighborhoods, groupAverage, avgDiff){
   return neighborhoods.sort((a, b) => {
     const aDiff = Math.abs(a.averageSnippetScore - a.averageTextScore);
     const bDiff = Math.abs(b.averageSnippetScore - b.averageTextScore);
 
-    let aCalc = (((a.averageSnippetScore) + (a.averageTextScore * 4)) / 5);
-    let bCalc = (((b.averageSnippetScore) + (b.averageTextScore * 4)) / 5);
+
+    let aCalc = a.averageSnippetScore - aDiff;
+    let bCalc = b.averageSnippetScore - aDiff;
+    // let aCalc = a.averageSnippetScore / (avgDiff - aDiff);
+    // let bCalc = b.averageSnippetScore / (avgDiff - bDiff);
+    // let aCalc = (((a.averageSnippetScore) + (a.averageTextScore)) / 2);
+    // let bCalc = (((b.averageSnippetScore) + (b.averageTextScore)) / 2);
     // console.log(a.name, 'aCalc prior', aCalc)
 
-    aCalc = aDiff > 5 && aCalc < groupAverage || aDiff > 6 && aCalc < groupAverage * 1.178 || aDiff > 6.75 && aCalc < groupAverage * 1.22? aCalc / aDiff : aCalc;
-    bCalc = bDiff > 5 && bCalc < groupAverage || bDiff > 6 && bCalc < groupAverage * 1.178 || bDiff > 6.75 && bCalc < groupAverage * 1.22? bCalc / bDiff : bCalc;
+    // aCalc = aDiff > 5 && aCalc < groupAverage || aDiff > 6 && aCalc < groupAverage * 1.178 || aDiff > 6.75 && aCalc < groupAverage * 1.22? aCalc / aDiff : aCalc;
+    // bCalc = bDiff > 5 && bCalc < groupAverage || bDiff > 6 && bCalc < groupAverage * 1.178 || bDiff > 6.75 && bCalc < groupAverage * 1.22? bCalc / bDiff : bCalc;
     // console.log(a.name, 'aCalc', aCalc, 'aDiff', aDiff);
 
     return bCalc - aCalc;

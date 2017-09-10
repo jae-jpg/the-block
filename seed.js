@@ -71,6 +71,7 @@ const getWikiData = function(neighborhood, city, id){
 		return axios.get(`https://en.wikipedia.org/w/api.php?action=query&format=json&titles=${result.wikiTitle}&prop=revisions&rvprop=content`)
 	})
 	.then(apiRes => {
+    if (apiRes === undefined) return;
 		const pages = apiRes.data.query.pages;
     const keys = Object.keys(pages);
     if (keys === undefined) return
@@ -79,7 +80,7 @@ const getWikiData = function(neighborhood, city, id){
 		const wikiText = sanitizeHtml(text, {
 			allowedTags: [],
 			allowedAttributes: []
-    }).replace(/\{\{Infobox NRHP/g, '').replace(/\n|\|thumb(.*?)px\||\|/g, ' ').replace(/\{\{(.*?)\}\}|\[http(.*?)\]|&quot;|\[\[|\]\]|'''|File:|.jpg|.png|.gif/g, '').slice(0, 3500);
+    }).replace(/\{\{Infobox NRHP/g, '').replace(/\n|\|thumb(.*?)px\||\|/g, ' ').replace(/\{\{(.*?)\}\}|\[http(.*?)\]|&quot;|\[\[|\]\]|'''|File:|.jpg|.png|.gif/g, '');
     result.wikiText = wikiText;  
     return result;
   })

@@ -28,7 +28,7 @@ api.post('/comparisons', (req, res) => {
 	let query = [];
 
 	neighborhoods.forEach(neighborhood => {
-		const singleQuery = [{"text": criterium}, {"text": neighborhood[option1]}]
+		const singleQuery = [{"text": criterium}, {"text": neighborhood[option1].slice(0, 10000)}]
 		query.push(singleQuery);
 	})
 
