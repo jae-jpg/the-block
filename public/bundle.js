@@ -54,7 +54,13 @@
 	
 	var _reactRedux = __webpack_require__(185);
 	
+	var _reactRouter = __webpack_require__(227);
+	
 	var _reactRouterDom = __webpack_require__(217);
+	
+	var _createBrowserHistory = __webpack_require__(219);
+	
+	var _createBrowserHistory2 = _interopRequireDefault(_createBrowserHistory);
 	
 	var _store = __webpack_require__(253);
 	
@@ -119,8 +125,8 @@
 	    _MuiThemeProvider2.default,
 	    { muiTheme: muiTheme },
 	    _react2.default.createElement(
-	      _reactRouterDom.HashRouter,
-	      null,
+	      _reactRouter.Router,
+	      { history: (0, _createBrowserHistory2.default)() },
 	      _react2.default.createElement(
 	        'div',
 	        { className: 'main' },
@@ -27650,7 +27656,7 @@
 	    var promises = [];
 	
 	    criteria.forEach(function (criterium) {
-	      var promise = _axios2.default.post('/api/comparisons/overall', { criterium: criterium, neighborhoods: neighborhoods, option1: option1 });
+	      var promise = _axios2.default.post('/api/comparisons', { criterium: criterium, neighborhoods: neighborhoods, option1: option1 });
 	      promises.push(promise);
 	    });
 	
@@ -68745,7 +68751,7 @@
 	          null,
 	          'semantic similarity'
 	        ),
-	        ' between user input and location data in order to determine the best match for its users. Made possible with ',
+	        ' between your input and location data in order to determine the best matches. Made possible with ',
 	        _react2.default.createElement(
 	          _styled.Em,
 	          null,
@@ -68763,7 +68769,7 @@
 	          { href: 'http://www.cortical.io/' },
 	          'Cortical.io'
 	        ),
-	        ' APIs.'
+	        '.'
 	      ),
 	      _react2.default.createElement(
 	        _styled.Text,

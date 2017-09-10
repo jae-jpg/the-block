@@ -2,7 +2,9 @@
 import React from 'react'
 import {render} from 'react-dom'
 import { Provider } from 'react-redux'
-import { HashRouter as Router, Route, Switch } from 'react-router-dom';
+import { Router } from 'react-router'
+import { Route, Switch } from 'react-router-dom'
+import createHistory from 'history/createBrowserHistory'
 
 import store from './store'
 import Root from './components/Root'
@@ -33,7 +35,7 @@ const muiTheme = getMuiTheme({
 render (
   <Provider store={store}>
     <MuiThemeProvider muiTheme={muiTheme}>  
-      <Router>
+      <Router history={createHistory()}>
         <div className="main">
           <div className="footer">
             <Navbar />

@@ -23,7 +23,7 @@ api.get('/city/:cityId/neighborhoods', (req, res) => {
 	})
 })
 
-api.post('/comparisons/overall', (req, res) => {
+api.post('/comparisons', (req, res) => {
 	const {criterium, neighborhoods, option1} = req.body;
 	let query = [];
 

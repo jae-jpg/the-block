@@ -91,7 +91,7 @@ export function getIndividualComparisons(option1, option2){
     let promises = [];
     
     criteria.forEach(criterium => {
-      const promise = axios.post(`/api/comparisons/overall`, {criterium, neighborhoods, option1})
+      const promise = axios.post(`/api/comparisons`, {criterium, neighborhoods, option1})
       promises.push(promise)
     })
     
