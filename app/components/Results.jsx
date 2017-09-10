@@ -49,7 +49,7 @@ function Results(props){
       <h1>Have you considered...</h1>
         <Row>
           {
-            testData1.map(neighborhood => (
+            props.topResult.map(neighborhood => (
               <Card key={neighborhood.id}>
                 <Rank>#1</Rank>
                 <Neighborhood>{neighborhood.name.toUpperCase()}</Neighborhood>
@@ -61,7 +61,7 @@ function Results(props){
         </Row>
         <Row>
           {
-            testData2.map((neighborhood, idx) => (
+            props.neighborhoods.map((neighborhood, idx) => (
               <Card key={neighborhood.id}>
                 <Rank>#{idx + 2}</Rank>
                 <Neighborhood>{neighborhood.name.toUpperCase()}</Neighborhood>

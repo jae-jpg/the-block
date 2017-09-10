@@ -48,6 +48,7 @@ export const Rank = styled.h3`
 export const Neighborhood = styled.h3`
   color: #E8A155;
   margin-bottom: 3px;
+  margin-top: 5px;
 `
 
 export const Description = styled.p`

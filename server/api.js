@@ -1,8 +1,6 @@
 'use strict'
 const api = require('express').Router()
 const axios = require('axios');
-const sanitizeHtml = require('sanitize-html')
-const md5 = require('md5');
 const Neighborhood = require('./db/models/neighborhood');
 const City = require('./db/models/city');
 
