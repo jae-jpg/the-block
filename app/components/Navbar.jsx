@@ -5,14 +5,14 @@ import {getCities} from '../store';
 import {NavLink} from './styled';
 
 
-export default function Footer (){
+export default function Navbar (){
   return (
     <div className="footer-container">
       <div className="footer-side">
-        <Link to="/"><NavLink>The Block</NavLink></Link>
+        <Link to="/"><NavLink>Start Over</NavLink></Link>
       </div>
       <div className="footer-side">
-        <Link to="/"><NavLink>Start Over</NavLink></Link>
+        <Link to="/about"><NavLink>About</NavLink></Link>
       </div>
     </div>
   )

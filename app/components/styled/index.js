@@ -7,8 +7,8 @@ export const Title = styled.h1`
 
 export const Container = styled.div`
   display: flex;
-  flex-direction: column;
-  height: 100%;
+  flex-direction: ${props => props.row ? 'row' : 'column'};
+  height: ${props => props.row ? '' : '100%'};
   justify-content: center;
   align-items: center;
   text-align: center;
@@ -78,4 +78,14 @@ export const Row = styled.div`
   padding-right: 100px;
   color: #565353;
   margin: 20px 0px;
+`
+
+export const Text = styled.p`
+  font-size: 20px;
+  padding: 0px 200px;
+  margin: 10px 0px;
+`
+
+export const Em = styled.span`
+  color: #E8A155;
 `

@@ -80,9 +80,13 @@
 	
 	var _Loadscreen2 = _interopRequireDefault(_Loadscreen);
 	
-	var _Footer = __webpack_require__(552);
+	var _Navbar = __webpack_require__(597);
 	
-	var _Footer2 = _interopRequireDefault(_Footer);
+	var _Navbar2 = _interopRequireDefault(_Navbar);
+	
+	var _About = __webpack_require__(596);
+	
+	var _About2 = _interopRequireDefault(_About);
 	
 	var _MuiThemeProvider = __webpack_require__(553);
 	
@@ -123,7 +127,7 @@
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'footer' },
-	          _react2.default.createElement(_Footer2.default, null)
+	          _react2.default.createElement(_Navbar2.default, null)
 	        ),
 	        _react2.default.createElement(
 	          'div',
@@ -132,6 +136,7 @@
 	            _reactRouterDom.Switch,
 	            null,
 	            _react2.default.createElement(_reactRouterDom.Route, { path: '/city/:cityId', component: _SingleCityContainer2.default }),
+	            _react2.default.createElement(_reactRouterDom.Route, { path: '/about', component: _About2.default }),
 	            _react2.default.createElement(_reactRouterDom.Route, { path: '/test', component: _Results2.default }),
 	            _react2.default.createElement(_reactRouterDom.Route, { component: _Root2.default })
 	          )
@@ -61917,10 +61922,10 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.Row = exports.Card = exports.Description = exports.Neighborhood = exports.Rank = exports.Button = exports.Form = exports.NavLink = exports.Container = exports.Title = undefined;
+	exports.Em = exports.Text = exports.Row = exports.Card = exports.Description = exports.Neighborhood = exports.Rank = exports.Button = exports.Form = exports.NavLink = exports.Container = exports.Title = undefined;
 	
 	var _templateObject = _taggedTemplateLiteral(['\n  font-size: 52px;\n  text-align: center;\n'], ['\n  font-size: 52px;\n  text-align: center;\n']),
-	    _templateObject2 = _taggedTemplateLiteral(['\n  display: flex;\n  flex-direction: column;\n  height: 100%;\n  justify-content: center;\n  align-items: center;\n  text-align: center;\n'], ['\n  display: flex;\n  flex-direction: column;\n  height: 100%;\n  justify-content: center;\n  align-items: center;\n  text-align: center;\n']),
+	    _templateObject2 = _taggedTemplateLiteral(['\n  display: flex;\n  flex-direction: ', ';\n  height: ', ';\n  justify-content: center;\n  align-items: center;\n  text-align: center;\n'], ['\n  display: flex;\n  flex-direction: ', ';\n  height: ', ';\n  justify-content: center;\n  align-items: center;\n  text-align: center;\n']),
 	    _templateObject3 = _taggedTemplateLiteral(['\n  color: #CBCBCB;\n  margin-top: 0px;\n'], ['\n  color: #CBCBCB;\n  margin-top: 0px;\n']),
 	    _templateObject4 = _taggedTemplateLiteral(['\n  margin: 0px;\n  padding: 0px;\n  display: flex;\n  height: 45px;\n  align-items: center;\n  justify-content: center;\n'], ['\n  margin: 0px;\n  padding: 0px;\n  display: flex;\n  height: 45px;\n  align-items: center;\n  justify-content: center;\n']),
 	    _templateObject5 = _taggedTemplateLiteral(['\n  border: 0px;\n  height: 37px;\n  width: 37px;\n  margin: 0px 0px;\n  padding: 0px 0px;\n  height: 36px;\n  background-color: white;\n  border-top-right-radius: 5px;\n  border-bottom-right-radius: 5px;\n'], ['\n  border: 0px;\n  height: 37px;\n  width: 37px;\n  margin: 0px 0px;\n  padding: 0px 0px;\n  height: 36px;\n  background-color: white;\n  border-top-right-radius: 5px;\n  border-bottom-right-radius: 5px;\n']),
@@ -61928,7 +61933,9 @@
 	    _templateObject7 = _taggedTemplateLiteral(['\n  color: #E8A155;\n  margin-bottom: 3px;\n'], ['\n  color: #E8A155;\n  margin-bottom: 3px;\n']),
 	    _templateObject8 = _taggedTemplateLiteral(['\n  margin: 0px 5px;\n  padding: 0px 5px;\n'], ['\n  margin: 0px 5px;\n  padding: 0px 5px;\n']),
 	    _templateObject9 = _taggedTemplateLiteral(['\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  width: 25%;\n  padding: 20px;  \n  text-align: center;\n  background-color: white;\n  background-image: linear-gradient(white, #EFECEA);\n  border-radius: 5px;\n  box-shadow: 0px 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);\n  &:hover{\n    background-image: linear-gradient(#F7F7F7, #F7F7F7);\n  }\n'], ['\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  width: 25%;\n  padding: 20px;  \n  text-align: center;\n  background-color: white;\n  background-image: linear-gradient(white, #EFECEA);\n  border-radius: 5px;\n  box-shadow: 0px 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);\n  &:hover{\n    background-image: linear-gradient(#F7F7F7, #F7F7F7);\n  }\n']),
-	    _templateObject10 = _taggedTemplateLiteral(['\n  display: flex;\n  width: 100%;\n  justify-content: space-around;\n  padding-left: 100px;\n  padding-right: 100px;\n  color: #565353;\n  margin: 20px 0px;\n'], ['\n  display: flex;\n  width: 100%;\n  justify-content: space-around;\n  padding-left: 100px;\n  padding-right: 100px;\n  color: #565353;\n  margin: 20px 0px;\n']);
+	    _templateObject10 = _taggedTemplateLiteral(['\n  display: flex;\n  width: 100%;\n  justify-content: space-around;\n  padding-left: 100px;\n  padding-right: 100px;\n  color: #565353;\n  margin: 20px 0px;\n'], ['\n  display: flex;\n  width: 100%;\n  justify-content: space-around;\n  padding-left: 100px;\n  padding-right: 100px;\n  color: #565353;\n  margin: 20px 0px;\n']),
+	    _templateObject11 = _taggedTemplateLiteral(['\n  font-size: 20px;\n  padding: 0px 200px;\n  margin: 10px 0px;\n'], ['\n  font-size: 20px;\n  padding: 0px 200px;\n  margin: 10px 0px;\n']),
+	    _templateObject12 = _taggedTemplateLiteral(['\n  color: #E8A155;\n'], ['\n  color: #E8A155;\n']);
 	
 	var _styledComponents = __webpack_require__(498);
 	
@@ -61940,7 +61947,11 @@
 	
 	var Title = exports.Title = _styledComponents2.default.h1(_templateObject);
 	
-	var Container = exports.Container = _styledComponents2.default.div(_templateObject2);
+	var Container = exports.Container = _styledComponents2.default.div(_templateObject2, function (props) {
+	  return props.row ? 'row' : 'column';
+	}, function (props) {
+	  return props.row ? '' : '100%';
+	});
 	
 	var NavLink = exports.NavLink = _styledComponents2.default.h3(_templateObject3);
 	
@@ -61955,6 +61966,10 @@
 	var Card = exports.Card = _styledComponents2.default.div(_templateObject9);
 	
 	var Row = exports.Row = _styledComponents2.default.div(_templateObject10);
+	
+	var Text = exports.Text = _styledComponents2.default.p(_templateObject11);
+	
+	var Em = exports.Em = _styledComponents2.default.span(_templateObject12);
 
 /***/ }),
 /* 498 */
@@ -68618,64 +68633,7 @@
 	// export default connect(mapState)(TransitionLoadscreen);
 
 /***/ }),
-/* 552 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.default = Footer;
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactRouterDom = __webpack_require__(217);
-	
-	var _reactRedux = __webpack_require__(185);
-	
-	var _store = __webpack_require__(253);
-	
-	var _styled = __webpack_require__(497);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function Footer() {
-	  return _react2.default.createElement(
-	    'div',
-	    { className: 'footer-container' },
-	    _react2.default.createElement(
-	      'div',
-	      { className: 'footer-side' },
-	      _react2.default.createElement(
-	        _reactRouterDom.Link,
-	        { to: '/' },
-	        _react2.default.createElement(
-	          _styled.NavLink,
-	          null,
-	          'The Block'
-	        )
-	      )
-	    ),
-	    _react2.default.createElement(
-	      'div',
-	      { className: 'footer-side' },
-	      _react2.default.createElement(
-	        _reactRouterDom.Link,
-	        { to: '/' },
-	        _react2.default.createElement(
-	          _styled.NavLink,
-	          null,
-	          'Start Over'
-	        )
-	      )
-	    )
-	  );
-	}
-
-/***/ }),
+/* 552 */,
 /* 553 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -73956,6 +73914,170 @@
 	};
 	
 	exports.default = new Typography();
+
+/***/ }),
+/* 596 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = About;
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactAddonsCssTransitionGroup = __webpack_require__(540);
+	
+	var _reactAddonsCssTransitionGroup2 = _interopRequireDefault(_reactAddonsCssTransitionGroup);
+	
+	var _IconButton = __webpack_require__(436);
+	
+	var _IconButton2 = _interopRequireDefault(_IconButton);
+	
+	var _styled = __webpack_require__(497);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function About() {
+	  return _react2.default.createElement(
+	    _reactAddonsCssTransitionGroup2.default,
+	    {
+	      transitionName: 'example',
+	      transitionAppear: true,
+	      transitionAppearTimeout: 500,
+	      transitionEnter: false,
+	      transitionLeave: false
+	    },
+	    _react2.default.createElement(
+	      _styled.Container,
+	      null,
+	      _react2.default.createElement(
+	        _styled.Text,
+	        null,
+	        'Welcome to the Block, a flexible, ',
+	        _react2.default.createElement(
+	          _styled.Em,
+	          null,
+	          ' natural language processing'
+	        ),
+	        ' recommendation engine to help you find the best neighborhood for your lifestyle. The Block measures the ',
+	        _react2.default.createElement(
+	          _styled.Em,
+	          null,
+	          'semantic similarity'
+	        ),
+	        ' between user input and location data in order to determine the best match for its users. Made possible with ',
+	        _react2.default.createElement(
+	          _styled.Em,
+	          null,
+	          'API integration'
+	        ),
+	        ' with Wikipedia and ',
+	        _react2.default.createElement(
+	          'a',
+	          { href: 'http://www.cortical.io/' },
+	          'Cortical.io'
+	        ),
+	        ' APIs.'
+	      ),
+	      _react2.default.createElement(
+	        _styled.Text,
+	        null,
+	        _react2.default.createElement(
+	          'strong',
+	          null,
+	          'Stack:'
+	        ),
+	        ' Express, Sequelize, React, Redux'
+	      ),
+	      _react2.default.createElement(
+	        _styled.Text,
+	        null,
+	        'Created by Jessica Blake'
+	      ),
+	      _react2.default.createElement(
+	        _styled.Container,
+	        { row: true },
+	        _react2.default.createElement(
+	          'a',
+	          { href: 'https://www.linkedin.com/in/blakejessica/' },
+	          _react2.default.createElement(_IconButton2.default, {
+	            iconStyle: { fontSize: "24px" },
+	            iconClassName: 'fa fa-linkedin' })
+	        ),
+	        _react2.default.createElement(
+	          'a',
+	          { href: 'https://github.com/jcblake14/the-block' },
+	          _react2.default.createElement(_IconButton2.default, {
+	            iconStyle: { fontSize: "24px" },
+	            iconClassName: 'fa fa-github' })
+	        )
+	      )
+	    )
+	  );
+	}
+
+/***/ }),
+/* 597 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = Navbar;
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRouterDom = __webpack_require__(217);
+	
+	var _reactRedux = __webpack_require__(185);
+	
+	var _store = __webpack_require__(253);
+	
+	var _styled = __webpack_require__(497);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function Navbar() {
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'footer-container' },
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'footer-side' },
+	      _react2.default.createElement(
+	        _reactRouterDom.Link,
+	        { to: '/' },
+	        _react2.default.createElement(
+	          _styled.NavLink,
+	          null,
+	          'Start Over'
+	        )
+	      )
+	    ),
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'footer-side' },
+	      _react2.default.createElement(
+	        _reactRouterDom.Link,
+	        { to: '/about' },
+	        _react2.default.createElement(
+	          _styled.NavLink,
+	          null,
+	          'About'
+	        )
+	      )
+	    )
+	  );
+	}
 
 /***/ })
 /******/ ]);

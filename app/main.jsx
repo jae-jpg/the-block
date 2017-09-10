@@ -10,7 +10,8 @@ import SingleCity from './components/SingleCity'
 import SingleCityContainer from './components/SingleCityContainer'
 import Results from './components/Results';
 import Loadscreen from './components/Loadscreen';
-import Footer from './components/Footer';
+import Navbar from './components/Navbar';
+import About from './components/About';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
@@ -35,11 +36,12 @@ render (
       <Router>
         <div className="main">
           <div className="footer">
-            <Footer />
+            <Navbar />
           </div>
           <div className="content">
             <Switch>
               <Route path='/city/:cityId' component={SingleCityContainer}/>
+              <Route path='/about' component={About}/>
               <Route path='/test' component={Results}/>
               <Route component={Root}/>
             </Switch>
