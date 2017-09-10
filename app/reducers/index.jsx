@@ -66,7 +66,7 @@ export function getCities(){
 }
 
 export function getCityNeighborhoods(cityId){
-  return function(dispatch, getState){
+  return function(dispatch){
     return axios.get(`/api/city/${cityId}/neighborhoods`)
     .then(res => {
       dispatch(setCityNeighborhoods(res.data));

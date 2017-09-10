@@ -27626,7 +27626,7 @@
 	}
 	
 	function getCityNeighborhoods(cityId) {
-	  return function (dispatch, getState) {
+	  return function (dispatch) {
 	    return _axios2.default.get('/api/city/' + cityId + '/neighborhoods').then(function (res) {
 	      dispatch(setCityNeighborhoods(res.data));
 	    });
