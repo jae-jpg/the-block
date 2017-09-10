@@ -27534,8 +27534,7 @@
 	
 	// https://github.com/gaearon/redux-thunk
 	
-	// export default createStore(rootReducer, applyMiddleware(thunkMiddleware, createLogger()))
-	exports.default = (0, _redux.createStore)(_reducers2.default, (0, _redux.applyMiddleware)(_reduxThunk2.default)); // https://github.com/evgenyrodionov/redux-logger
+	exports.default = (0, _redux.createStore)(_reducers2.default, (0, _redux.applyMiddleware)(_reduxThunk2.default, (0, _reduxLogger2.default)())); // https://github.com/evgenyrodionov/redux-logger
 
 /***/ }),
 /* 254 */
@@ -27699,14 +27698,6 @@
 	          return acc + el.diff;
 	        }, 0) / mapNeighborhoods.length;
 	        neighborhoods = sortByScore(neighborhoods, groupAverage, avgDiff);
-	        mapNeighborhoods = neighborhoods.map(function (n) {
-	          var snip = Number(n.averageSnippetScore.toFixed(2));
-	          var text = Number(n.averageTextScore.toFixed(2));
-	          var diff = Math.abs(snip - text);
-	          return { name: n.name, snip: snip, text: text, diff: diff };
-	        });
-	        console.log('avg diff', avgDiff);
-	        console.log(mapNeighborhoods);
 	        dispatch(updateNeighborhoods(neighborhoods));
 	        dispatch(setStatus('Results loaded'));
 	      }

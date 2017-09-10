@@ -130,14 +130,6 @@ export function getIndividualComparisons(option1, option2){
         });
         const avgDiff = mapNeighborhoods.reduce((acc, el) => acc + el.diff, 0) / mapNeighborhoods.length
         neighborhoods = sortByScore(neighborhoods, groupAverage, avgDiff);
-        mapNeighborhoods = neighborhoods.map(n => {
-          const snip = Number(n.averageSnippetScore.toFixed(2));
-          const text = Number(n.averageTextScore.toFixed(2))
-          const diff = Math.abs(snip - text)
-          return {name: n.name, snip, text, diff}
-        });
-        console.log('avg diff', avgDiff);
-        console.log(mapNeighborhoods);
         dispatch(updateNeighborhoods(neighborhoods));
         dispatch(setStatus('Results loaded'));
       }
