@@ -68595,61 +68595,6 @@
 	};
 	
 	exports.default = (0, _reactRedux.connect)(mapState)(Loadscreen);
-	
-	// OLD CODE
-	// import React from 'react';
-	// import {connect} from 'react-redux'
-	// import Transition from 'react-motion-ui-pack';
-	// import { spring } from 'react-motion';
-	
-	// function Loadscreen(props){
-	//   function loadMessage(){
-	//     switch (props.status) {
-	//       case 'Loading neighborhoods':
-	//         return 'Fetching your future neighborhoods...'
-	//       case 'Getting comparisons 1':
-	//         return 'Picking the best neighborhoods...'
-	//       case 'Getting comparisons 2':
-	//         return 'Tallying up the score (any minute now...)'
-	//       default:
-	//         return ''
-	//     }
-	//   }
-	
-	//   return (
-	//     <div className="loading-container">
-	//       <h1 className="loading1">Loading...</h1>
-	//       <h2 className="loading2">{loadMessage()}</h2>
-	//       <img className="icon" src="/images/Eclipse.svg"/>
-	//     </div>
-	//   )
-	// }
-	
-	// function mapState(state){
-	//   return {
-	//     status: state.status
-	//   }
-	// };
-	
-	// function TransitionLoadscreen(props){
-	//   return (
-	//       <Transition
-	//         component={false}
-	//         enter={{
-	//           opacity: 1,
-	//           translateX: spring(0, {stiffness: 400, damping: 20})
-	//         }}
-	//         leave={{
-	//           opacity: 0,
-	//           translateX: 250
-	//         }}
-	//       >
-	//       <Loadscreen key="3" status={props.status}/>
-	//       </Transition>
-	//   )
-	// }
-	
-	// export default connect(mapState)(TransitionLoadscreen);
 
 /***/ }),
 /* 552 */
@@ -68764,13 +68709,13 @@
 	          null,
 	          'semantic similarity'
 	        ),
-	        ' between your input and location data in order to determine the best matches. Made possible with ',
+	        ' between location data and the criteria that you provide in order to determine the best matches. Created using ',
 	        _react2.default.createElement(
 	          _styled.Em,
 	          null,
 	          'API integration'
 	        ),
-	        ' from ',
+	        ' with ',
 	        _react2.default.createElement(
 	          'a',
 	          { href: 'https://www.mediawiki.org/wiki/API:Main_page' },
@@ -68782,7 +68727,7 @@
 	          { href: 'http://www.cortical.io/' },
 	          'Cortical.io'
 	        ),
-	        '.'
+	        ' APIs.'
 	      ),
 	      _react2.default.createElement(
 	        _styled.Text,
